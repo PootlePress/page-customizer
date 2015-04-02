@@ -1,0 +1,28 @@
+/**
+ * Created by Shramee on April 02, 2015.
+ */
+.ppc-field { 
+	margin-top: 15px;
+}
+.ppc-field > .label {
+	width: 200px;
+	display: inline-block;
+	vertical-align: middle; 
+}
+.ppc-field > .control{ 
+	display: inline-block;
+	vertical-align: middle; 
+}
+.ppc-field > .wp-picker-container > .wp-color-result { 
+	margin: 0; 
+}
+.ppc-field > .image-upload-path { 
+	width: 200px; 
+}
+.ppc-field.layout > * { 
+	vertical-align: middle; 
+	display: inline-block; 
+}
+.ppc-field > img { 
+	margin:5px
+}
