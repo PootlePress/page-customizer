@@ -424,17 +424,38 @@ final class Pootle_Page_Customizer {
 	 */
 	public function styles() {
 		wp_enqueue_style( 'ppc-styles', plugins_url( '/assets/css/style.css', __FILE__ ) );
+		//Header options
+		$hideHeader = $this->get_value('header', 'hide-header', false);
+		$headerBgColor = $this->get_value('header', 'header-background-color', null);
+		$headerBgImage = $this->get_value('header', 'header-background-image', null);
+		//Body options
+		$bgColor = $this->get_value('body', 'background-color', null);
+		$bgImage = $this->get_value('body', 'background-image', null);
+		//Footer options
+		$hideFooter = $this->get_value('footer', 'hide-footer', false);
+		//Init $css
+		$css = '/*PootlePressPageCustomizer*/';
 
-		$hideHeader = $this->get_value('header', 'hide-header', false, $current_post);
-		$headerBgColor = $this->get_value('header', 'header-background-color', null, $current_post);
-		$headerBgImage = $this->get_value('header', 'header-background-image', null, $current_post);
+		//Header styles
+		$css .= '#masthead, #header, #site-header, .site-header{';
+		if( $hideHeader )		$css .= "display : none !important;";
+		if( $headerBgColor )	$css .= "background-color : {$headerBgColor} !important";
+		if( $headerBgImage )	$css .= "background-image : url({$headerBgImage}) !important";
+		//Header styles END
+		$css .= "}\n";
+		
+		//Body styles
+		$css .= 'body{';
+		if( $bgColor )			$css .= "background-color : {$bgColor} !important;";
+		if( $bgImage )			$css .= "background-image : url({$bgImage}) !important;";
+		//Body styles END
+		$css .= "}\n";
 
-		$BgColor = $this->get_value('body', 'background-color', null, $current_post);
-		$BgImage = $this->get_value('body', 'background-image', null, $current_post);
-
-		$hideFooter = $this->get_value('footer', 'hide-footer', false, $current_post);
-
-		$css = '';
+		//Footer style
+		$css .= '#footer, #site-footer, .site-footer{';
+		if( $hideFooter )		$css .= "display : none !important;";
+		//Footer styles END
+		$css .= "}\n";
 		wp_add_inline_style( 'ppc-styles', $css );
 	}
 
