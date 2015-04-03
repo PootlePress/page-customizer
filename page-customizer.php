@@ -437,7 +437,7 @@ final class Pootle_Page_Customizer {
 		$css = '/*PootlePressPageCustomizer*/';
 
 		//Header styles
-		$css .= '#masthead, #header, #site-header, .site-header{';
+		$css .= '#masthead, #header, #site-header, .site-header, .tc-header{';
 		if( $hideHeader )		$css .= "display : none !important;";
 		if( $headerBgColor )	$css .= "background-color : {$headerBgColor} !important";
 		if( $headerBgImage )	$css .= "background-image : url({$headerBgImage}) !important";
