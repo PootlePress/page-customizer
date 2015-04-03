@@ -492,7 +492,7 @@ final class Pootle_Page_Customizer {
 		$css .= "}\n";
 		
 		//Body styles
-		$css .= 'body{';
+		$css .= 'body.pootle-page-customizer-active {';
 		if( $bgColor )			$css .= "background-color : {$bgColor} !important;";
 		if( $bgImage )			$css .= "background : url({$bgImage}){$BgOptions}  !important;";
 		//Body styles END
