@@ -328,17 +328,18 @@ final class Pootle_Page_Customizer {
 	
 	private function get_meta_fields() {
 		$this->post_meta = array(
-		  //Body Controls
+
+		  //Background Controls
 			'background-image' => array(
 				'id' => 'background-image',
-				'section' => 'body',
+				'section' => 'Background',
 				'label' => 'Page background image',
 				'type' => 'image',
 				'default' => '',
 			),
 			'background-repeat' => array(
 				'id' => 'background-repeat',
-				'section' => 'body',
+				'section' => 'Background',
 				'label' => 'Background repeat',
 				'type' => 'radio',
 				'default' => 'repeat',
@@ -346,7 +347,7 @@ final class Pootle_Page_Customizer {
 			),
 			'background-position' => array(
 				'id' => 'background-position',
-				'section' => 'body',
+				'section' => 'Background',
 				'label' => 'Background position',
 				'type' => 'radio',
 				'default' => 'center',
@@ -354,7 +355,7 @@ final class Pootle_Page_Customizer {
 			),
 			'background-attachment' => array(
 				'id' => 'background-attachment',
-				'section' => 'body',
+				'section' => 'Background',
 				'label' => 'Background attachment',
 				'type' => 'radio',
 				'default' => 'scroll',
@@ -362,52 +363,55 @@ final class Pootle_Page_Customizer {
 			),
 			'background-color' => array(
 				'id' => 'background-color',
-				'section' => 'body',
+				'section' => 'Background',
 				'label' => 'Page background color',
 				'type' => 'color',
 				'default' => '',
 			),
+
 		  //Header Options
 			'hide-header' => array(
 				'id' => 'hide-header',
-				'section' => 'header',
+				'section' => 'Header',
 				'label' => 'Hide header',
 				'type' => 'checkbox',
 				'default' => '',
 			),
 			'header-background-image' => array(
 				'id' => 'header-background-image',
-				'section' => 'header',
+				'section' => 'Header',
 				'label' => 'Header background image',
 				'type' => 'image',
 				'default' => '',
 			),
 			'header-background-color' => array(
 				'id' => 'header-background-color',
-				'section' => 'header',
+				'section' => 'Header',
 				'label' => 'Header background color',
 				'type' => 'color',
 				'default' => '',
 			),
+
 		  //Content
 			'hide-breadcrumbs' => array(
 				'id' => 'hide-breadcrumbs',
-				'section' => 'content',
+				'section' => 'Content',
 				'label' => 'Hide breadcrumbs',
 				'type' => 'checkbox',
 				'default' => '',
 			),
 			'hide-title' => array(
 				'id' => 'hide-title',
-				'section' => 'content',
+				'section' => 'Content',
 				'label' => 'Hide title',
 				'type' => 'checkbox',
 				'default' => '',
 			),
+
 		  //Footer
 			'hide-footer' => array(
 				'id' => 'hide-footer',
-				'section' => 'footer',
+				'section' => 'Footer',
 				'label' => 'Hide footer',
 				'type' => 'checkbox',
 				'default' => '',
@@ -418,10 +422,27 @@ final class Pootle_Page_Customizer {
 	
 	public function custom_fields() {
 		$fields = $this->post_meta;
-
+		$field_structure = array();
 		foreach ($fields as $key => $field) {
-			$this->render_field($field);
+			$field_structure[$field['section']][] = $field;
 		}
+		echo "<div id='ppc-tabs-wrapper'>";
+		echo "<ul class='ppc-sections-nav nav-tab-wrapper'>";
+		  foreach( $field_structure as $sec => $fields ){
+			echo ""
+			. "<li>"
+			  . "<a class='nav-tab' href='#ppc-section-{$sec}'> $sec </a>"
+			. "</li>";
+		  }
+		echo "</ul>";
+		foreach( $field_structure as $sec => $fields ){
+			echo "<div class='ppc-section' id='ppc-section-{$sec}'>";
+			foreach ($fields as $fld){
+				$this->render_field($fld);
+			}
+			echo "</div>";
+		}
+		echo '</div>';
 	}
 
 	/**
@@ -463,23 +484,23 @@ final class Pootle_Page_Customizer {
 	public function styles() {
 		wp_enqueue_style( 'ppc-styles', plugins_url( '/assets/css/style.css', __FILE__ ) );
 		//Header options
-		$hideHeader = $this->get_value('header', 'hide-header', false);
-		$headerBgColor = $this->get_value('header', 'header-background-color', null);
-		$headerBgImage = $this->get_value('header', 'header-background-image', null);
+		$hideHeader = $this->get_value('Header', 'hide-header', false);
+		$headerBgColor = $this->get_value('Header', 'header-background-color', null);
+		$headerBgImage = $this->get_value('Header', 'header-background-image', null);
 		
 		//Body options
-		$bgColor = $this->get_value('body', 'background-color', null);
-		$bgImage = $this->get_value('body', 'background-image', null);
-		$BgOptions = ' '.$this->get_value('body', 'background-repeat', null, $current_post).' '
-		  . $this->get_value('body', 'background-attachment', null, $current_post).' '
-		  . $this->get_value('body', 'background-position', null, $current_post);
+		$bgColor = $this->get_value('Background', 'background-color', null);
+		$bgImage = $this->get_value('Background', 'background-image', null);
+		$BgOptions = ' '.$this->get_value('Background', 'background-repeat', null, $current_post).' '
+		  . $this->get_value('Background', 'background-attachment', null, $current_post).' '
+		  . $this->get_value('Background', 'background-position', null, $current_post);
 
 		
 		//Content
-		$hideBread = $this->get_value('content', 'hide-breadcrumbs', null);
-		$hideTitle = $this->get_value('content', 'hide-title', null);
+		$hideBread = $this->get_value('Content', 'hide-breadcrumbs', null);
+		$hideTitle = $this->get_value('Content', 'hide-title', null);
 		//Footer options
-		$hideFooter = $this->get_value('footer', 'hide-footer', false);
+		$hideFooter = $this->get_value('Footer', 'hide-footer', false);
 		//Init $css
 		$css = '/*PootlePressPageCustomizer*/';
 
@@ -529,7 +550,8 @@ final class Pootle_Page_Customizer {
 		// only in post and page create and edit screen
 
 		wp_enqueue_script('wp-color-picker');
-		wp_enqueue_script('ppc-admin-script', trailingslashit($this->plugin_url) . 'assets/js/admin/admin.js', array('wp-color-picker', 'jquery', 'thickbox'));
+		wp_enqueue_script('jquery-ui-tabs');
+		wp_enqueue_script('ppc-admin-script', trailingslashit($this->plugin_url) . 'assets/js/admin/admin.js', array('wp-color-picker', 'jquery', 'thickbox', 'jquery-ui-tabs'));
 
 		wp_enqueue_style('wp-color-picker');
 		wp_enqueue_style('thickbox');

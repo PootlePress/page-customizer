@@ -4,6 +4,7 @@
 (function ($) {
 
     $(document).ready(function () {
+		$('#ppc-tabs-wrapper').tabs();
 		//Hiding background customizing options if .ppc-field.background-image .image-upload-path is blank
 		$bg_url = $('.ppc-field.background-image .image-upload-path');
 		$bg_options = $('.ppc-field.background-repeat, .ppc-field.background-position, .ppc-field.background-attachment');
