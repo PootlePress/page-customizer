@@ -366,6 +366,21 @@ final class Pootle_Page_Customizer {
 				'type' => 'color',
 				'default' => '',
 			),
+		  //Content
+			'hide-breadcrumbs' => array(
+				'id' => 'hide-breadcrumbs',
+				'section' => 'content',
+				'label' => 'Hide breadcrumbs',
+				'type' => 'checkbox',
+				'default' => '',
+			),
+			'hide-title' => array(
+				'id' => 'hide-title',
+				'section' => 'content',
+				'label' => 'Hide title',
+				'type' => 'checkbox',
+				'default' => '',
+			),
 		  //Footer
 			'hide-footer' => array(
 				'id' => 'hide-footer',
@@ -428,9 +443,14 @@ final class Pootle_Page_Customizer {
 		$hideHeader = $this->get_value('header', 'hide-header', false);
 		$headerBgColor = $this->get_value('header', 'header-background-color', null);
 		$headerBgImage = $this->get_value('header', 'header-background-image', null);
+		
 		//Body options
 		$bgColor = $this->get_value('body', 'background-color', null);
 		$bgImage = $this->get_value('body', 'background-image', null);
+		
+		//Content
+		$hideBread = $this->get_value('content', 'hide-breadcrumbs', null);
+		$hideTitle = $this->get_value('content', 'hide-title', null);
 		//Footer options
 		$hideFooter = $this->get_value('footer', 'hide-footer', false);
 		//Init $css
@@ -450,6 +470,10 @@ final class Pootle_Page_Customizer {
 		if( $bgImage )			$css .= "background-image : url({$bgImage}) !important;";
 		//Body styles END
 		$css .= "}\n";
+
+		//Content
+		if($hideBread)			$css .= "#breadcrumbs, #breadcrumb, .breadcrumbs, .breadcrumb, .breadcrumbs-trail, .wc-breadcrumbs, .wc-breadcrumb, .woocommerce-breadcrumb, .woocommerce-breadcrumbs {display : none !important;}\n";
+		if($hideTitle)			$css .= ".entry-title {display : none !important;}\n";
 
 		//Footer style
 		$css .= '#footer, #site-footer, .site-footer{';
