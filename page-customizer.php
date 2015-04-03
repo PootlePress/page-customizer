@@ -262,7 +262,6 @@ final class Pootle_Page_Customizer {
 
 		add_action('admin_print_scripts', array($this, 'admin_scripts'));
 		add_action( 'wp_enqueue_scripts', array( $this, 'styles' ) );
-		add_action( 'admin_print_scripts', array( $this, 'script' ) );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
 		add_action( 'customize_preview_init', array( $this, 'customize_preview_js' ) );
 		add_filter( 'body_class', array( $this, 'body_class' ) );
@@ -336,6 +335,30 @@ final class Pootle_Page_Customizer {
 				'label' => 'Page background image',
 				'type' => 'image',
 				'default' => '',
+			),
+			'background-repeat' => array(
+				'id' => 'background-repeat',
+				'section' => 'body',
+				'label' => 'Background repeat',
+				'type' => 'radio',
+				'default' => 'repeat',
+				'options' => array('no-repeat' => 'No Repeat','repeat' => 'Tile','repeat-x' => 'Tile Horizontally','repeat-y' => 'Tile Vertically',)
+			),
+			'background-position' => array(
+				'id' => 'background-position',
+				'section' => 'body',
+				'label' => 'Background position',
+				'type' => 'radio',
+				'default' => 'center',
+				'options' => array('left' => 'Left', 'center' => 'Center', 'right' => 'Right')
+			),
+			'background-attachment' => array(
+				'id' => 'background-attachment',
+				'section' => 'body',
+				'label' => 'Background attachment',
+				'type' => 'radio',
+				'default' => 'scroll',
+				'options' => array('fixed' => 'Fixed','scroll' => 'Scroll')
 			),
 			'background-color' => array(
 				'id' => 'background-color',
@@ -447,6 +470,10 @@ final class Pootle_Page_Customizer {
 		//Body options
 		$bgColor = $this->get_value('body', 'background-color', null);
 		$bgImage = $this->get_value('body', 'background-image', null);
+		$BgOptions = ' '.$this->get_value('body', 'background-repeat', null, $current_post).' '
+		  . $this->get_value('body', 'background-attachment', null, $current_post).' '
+		  . $this->get_value('body', 'background-position', null, $current_post);
+
 		
 		//Content
 		$hideBread = $this->get_value('content', 'hide-breadcrumbs', null);
@@ -467,7 +494,7 @@ final class Pootle_Page_Customizer {
 		//Body styles
 		$css .= 'body{';
 		if( $bgColor )			$css .= "background-color : {$bgColor} !important;";
-		if( $bgImage )			$css .= "background-image : url({$bgImage}) !important;";
+		if( $bgImage )			$css .= "background : url({$bgImage}){$BgOptions}  !important;";
 		//Body styles END
 		$css .= "}\n";
 
@@ -484,22 +511,6 @@ final class Pootle_Page_Customizer {
 	}
 
 	/**
-	 * Print custom js
-	 * @since   0.7
-	 * @return  void
-	 */
-	public function script() {
-	?>
-	<script id='ppc-script'>
-	jQuery(document).ready(function($){
-	<?php
-	?>
-	})
-	</script>
-	<?php
-	}
-
-	/**
 	 * Enqueue Js 
 	 * @global type $pagenow
 	 * @return null
@@ -507,11 +518,7 @@ final class Pootle_Page_Customizer {
 	public function admin_scripts() {
 		global $pagenow;
 
-		if($pagenow=='edit-tags.php'){
-			//Though everything is commented this if section is still important coz it prevents returning the function
-			//wp_enqueue_script('wp-color-picker');
-			//wp_enqueue_script('ppc-tax-script', trailingslashit($this->plugin_url) . 'assets/js/admin/taxonomy.js', array('wp-color-picker', 'thickbox', 'jquery'));
-		}elseif(
+		if(
 		  (!isset($pagenow) || !($pagenow == 'post-new.php' || $pagenow == 'post.php'))
 		  OR
 		  (isset($_REQUEST['post-type']) && strtolower($_REQUEST['post_type']) != 'page')

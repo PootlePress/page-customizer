@@ -4,6 +4,20 @@
 (function ($) {
 
     $(document).ready(function () {
+		//Hiding background customizing options if .ppc-field.background-image .image-upload-path is blank
+		$bg_url = $('.ppc-field.background-image .image-upload-path');
+		$bg_options = $('.ppc-field.background-repeat, .ppc-field.background-position, .ppc-field.background-attachment');
+
+		if($bg_url.val() == ''){
+			$bg_options.hide(0);
+		}
+
+		$bg_url.change(function(){
+			if($bg_url.val() == ''){
+				$bg_options.hide(0);
+			}else{$bg_options.show(0);}
+		})
+
 
         //wpColorPicker
 		$('.ppc-field .color-picker-hex').wpColorPicker();
