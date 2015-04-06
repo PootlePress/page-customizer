@@ -489,9 +489,9 @@ final class Pootle_Page_Customizer {
 		//Body options
 		$bgColor = $this->get_value('Background', 'background-color', null);
 		$bgImage = $this->get_value('Background', 'background-image', null);
-		$BgOptions = ' '.$this->get_value('Background', 'background-repeat', null, $current_post).' '
-		  . $this->get_value('Background', 'background-attachment', null, $current_post).' '
-		  . $this->get_value('Background', 'background-position', null, $current_post);
+		$BgOptions = ' '.$this->get_value('Background', 'background-repeat', null) . ' '
+		  . $this->get_value('Background', 'background-attachment', null) . ' '
+		  . $this->get_value('Background', 'background-position', null);
 
 		
 		//Content
