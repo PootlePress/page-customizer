@@ -294,8 +294,9 @@ final class Pootle_Page_Customizer {
 	public function customize_register( $wp_customize ) {/*Placeholder for future*/}
 
 	public function register_meta_box() {
-		add_meta_box('ppc-meta-box', 'Page Customizer settings', array($this, 'custom_fields'), 'post');
-		add_meta_box('ppc-meta-box', 'Page Customizer settings', array($this, 'custom_fields'), 'page');
+		foreach ( $this->supported_post_types as $post_type ) {
+			add_meta_box('ppc-meta-box', 'Page Customizer settings', array($this, 'custom_fields'), $post_type);
+		}
 	}
 
 	public function save_post($postID) {
@@ -320,10 +321,7 @@ final class Pootle_Page_Customizer {
 	}
 
 	private function get_supported_post_types(){
-		$this->supported_post_types = array(
-		  'post',
-		  'page'
-		);
+		$this->supported_post_types = get_post_types( '', 'names' );
 	}
 	
 	private function get_meta_fields() {
