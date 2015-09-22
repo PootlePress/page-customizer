@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Page Customizer
  * Plugin URI: http://pootlepress.com/
- * Description:	Adds options for individual pages, posts and products underneath the WordPress editor. Change background image and color, header background image and color, hide titles, menus, breadcrumbs, layouts and footer.
+ * Description:    Adds options for individual pages, posts and products underneath the WordPress editor. Change background image and color, header background image and color, hide titles, menus, breadcrumbs, layouts and footer.
  * Version: 0.7
  * Author: PootlePress
  * Author URI: http://pootlepress.com/
@@ -17,24 +17,27 @@
  * @author PootlePress
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+} // Exit if accessed directly
 
-require_once(dirname(__FILE__) . '/includes/class-pootlepress-updater.php');
+require_once( dirname( __FILE__ ) . '/includes/class-pootlepress-updater.php' );
 
 /**
  * Instantiates Pootlepress_Updater
  */
-function pp_updater(){
-	if (!function_exists('get_plugin_data')) {
-		include(ABSPATH . 'wp-admin/includes/plugin.php');
+function pp_updater() {
+	if ( ! function_exists( 'get_plugin_data' ) ) {
+		include( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
-	$data = get_plugin_data(__FILE__);
+	$data                   = get_plugin_data( __FILE__ );
 	$plugin_current_version = $data['Version'];
-	$plugin_remote_path = 'http://www.pootlepress.com/?updater=1';
-	$plugin_slug = plugin_basename(__FILE__);
-	new Pootlepress_Updater ($plugin_current_version, $plugin_remote_path, $plugin_slug);
+	$plugin_remote_path     = 'http://www.pootlepress.com/?updater=1';
+	$plugin_slug            = plugin_basename( __FILE__ );
+	new Pootlepress_Updater ( $plugin_current_version, $plugin_remote_path, $plugin_slug );
 }
-add_action('init', 'pp_updater');
+
+add_action( 'init', 'pp_updater' );
 
 /**
  * Returns the main instance of Pootle_Page_Customizer to prevent the need to use globals.
@@ -52,17 +55,17 @@ Pootle_Page_Customizer();
  * Main Pootle_Page_Customizer Class
  *
  * @class Pootle_Page_Customizer
- * @version	0.7
+ * @version    0.7
  * @since 0.7
- * @package	Pootle_Page_Customizer
+ * @package    Pootle_Page_Customizer
  * @author PootlePress
  */
 final class Pootle_Page_Customizer {
 	/**
 	 * Pootle_Page_Customizer The single instance of Pootle_Page_Customizer.
-	 * @var 	object
+	 * @var    object
 	 * @access  private
-	 * @since 	0.7
+	 * @since    0.7
 	 */
 	private static $_instance = null;
 
@@ -106,8 +109,8 @@ final class Pootle_Page_Customizer {
 	 * @since   0.7
 	 */
 	public $admin;
- 
- 	/**
+
+	/**
 	 * The settings object.
 	 * @var     object
 	 * @access  public
@@ -141,7 +144,7 @@ final class Pootle_Page_Customizer {
 
 	/**
 	 * Array of classes to be put in body
-	 * @var array 
+	 * @var array
 	 */
 	public $body_classes = array();
 
@@ -150,13 +153,12 @@ final class Pootle_Page_Customizer {
 	 * Constructor function.
 	 * @access  public
 	 * @since   0.7
-	 * @return  void
 	 */
 	public function __construct() {
-		$this->token 			= 'pootle-page-customizer';
-		$this->plugin_url 		= plugin_dir_url( __FILE__ );
-		$this->plugin_path 		= plugin_dir_path( __FILE__ );
-		$this->version 			= '0.7';
+		$this->token       = 'pootle-page-customizer';
+		$this->plugin_url  = plugin_dir_url( __FILE__ );
+		$this->plugin_path = plugin_dir_path( __FILE__ );
+		$this->version     = '0.7';
 
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
@@ -178,8 +180,10 @@ final class Pootle_Page_Customizer {
 	 * @return Main Pootle_Page_Customizer instance
 	 */
 	public static function instance() {
-		if ( is_null( self::$_instance ) )
+		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
+		}
+
 		return self::$_instance;
 	} // End instance()
 
@@ -256,12 +260,12 @@ final class Pootle_Page_Customizer {
 
 		$this->get_supported_post_types();
 		$this->get_meta_fields();
-		
-		add_action('admin_init', array($this, 'register_meta_box'));
-		add_action('save_post', array($this, 'save_post'));
 
-		add_action('admin_print_scripts', array($this, 'admin_scripts'));
-		add_action( 'wp_enqueue_scripts', array( $this, 'styles' ) );
+		add_action( 'admin_init', array( $this, 'register_meta_box' ) );
+		add_action( 'save_post', array( $this, 'save_post' ) );
+
+		add_action( 'admin_print_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'public_scripts' ) );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
 		add_action( 'customize_preview_init', array( $this, 'customize_preview_js' ) );
 		add_filter( 'body_class', array( $this, 'body_class' ) );
@@ -289,154 +293,184 @@ final class Pootle_Page_Customizer {
 
 	/**
 	 * Customizer Controls and settings
+	 *
 	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
 	 */
-	public function customize_register( $wp_customize ) {/*Placeholder for future*/}
+	public function customize_register( $wp_customize ) {/*Placeholder for future*/
+	}
 
 	public function register_meta_box() {
 		foreach ( $this->supported_post_types as $post_type ) {
-			add_meta_box('ppc-meta-box', 'Page Customizer settings', array($this, 'custom_fields'), $post_type);
+			add_meta_box( 'ppc-meta-box', 'Page Customizer settings', array( $this, 'custom_fields' ), $post_type );
 		}
 	}
 
-	public function save_post($postID) {
-		$post = get_post($postID);
-		 
+	public function save_post( $postID ) {
+		$post = get_post( $postID );
+
 		//check if post type is post,page or product
-		if (!in_array($post->post_type, $this->supported_post_types)) {
+		if ( ! in_array( $post->post_type, $this->supported_post_types ) ) {
 			return;
 		}
 
-		if (isset($_REQUEST[$this->token]) && is_array($_REQUEST[$this->token])) {
-			$PPCValues = $_REQUEST[$this->token];
+		if ( isset( $_REQUEST[ $this->token ] ) && is_array( $_REQUEST[ $this->token ] ) ) {
+			$PPCValues = $_REQUEST[ $this->token ];
 
 			//Automating the saving of our post metas
 			$all_meta = $this->post_meta;
-			foreach($all_meta as $meta){
-				$meta_id = $this->get_meta_key($meta['section'], $meta['id']);
-				$new_val = $PPCValues[$meta['section']][$meta['id']];
-				update_post_meta($postID, $meta_id, $new_val);
+			foreach ( $all_meta as $meta ) {
+				$meta_id = $this->get_meta_key( $meta['section'], $meta['id'] );
+				$new_val = $PPCValues[ $meta['section'] ][ $meta['id'] ];
+				update_post_meta( $postID, $meta_id, $new_val );
 			}
 		}
 	}
 
-	private function get_supported_post_types(){
+	private function get_supported_post_types() {
 		$this->supported_post_types = get_post_types( '', 'names' );
 	}
-	
+
 	private function get_meta_fields() {
 		$this->post_meta = array(
 
-		  //Background Controls
-			'background-image' => array(
-				'id' => 'background-image',
+			//Background Controls
+			'background-type'             => array(
+				'id'      => 'background-type',
 				'section' => 'Background',
-				'label' => 'Page background image',
-				'type' => 'image',
+				'label'   => 'Background',
+				'type'    => 'select',
+				'options' => array(
+					'color' => 'Color',
+					'image' => 'Image',
+					'video' => 'Video',
+				),
 				'default' => '',
 			),
-			'background-repeat' => array(
-				'id' => 'background-repeat',
+			'background-video'            => array(
+				'id'      => 'background-video',
 				'section' => 'Background',
-				'label' => 'Background repeat',
-				'type' => 'radio',
+				'label'   => 'Background Video',
+				'type'    => 'video',
+				'default' => '',
+			),
+			'background-responsive-image' => array(
+				'id'      => 'background-responsive-image',
+				'section' => 'Background',
+				'label'   => 'Responsive image',
+				'type'    => 'image',
+				'default' => '',
+			),
+			'background-image'            => array(
+				'id'      => 'background-image',
+				'section' => 'Background',
+				'label'   => 'Page background image',
+				'type'    => 'image',
+				'default' => '',
+			),
+			'background-repeat'           => array(
+				'id'      => 'background-repeat',
+				'section' => 'Background',
+				'label'   => 'Background repeat',
+				'type'    => 'radio',
 				'default' => 'repeat',
-				'options' => array('no-repeat' => 'No Repeat','repeat' => 'Tile','repeat-x' => 'Tile Horizontally','repeat-y' => 'Tile Vertically',)
+				'options' => array(
+					'no-repeat' => 'No Repeat',
+					'repeat'    => 'Tile',
+					'repeat-x'  => 'Tile Horizontally',
+					'repeat-y'  => 'Tile Vertically',
+				)
 			),
-			'background-position' => array(
-				'id' => 'background-position',
+			'background-position'         => array(
+				'id'      => 'background-position',
 				'section' => 'Background',
-				'label' => 'Background position',
-				'type' => 'radio',
+				'label'   => 'Background position',
+				'type'    => 'radio',
 				'default' => 'center',
-				'options' => array('left' => 'Left', 'center' => 'Center', 'right' => 'Right')
+				'options' => array( 'left' => 'Left', 'center' => 'Center', 'right' => 'Right' )
 			),
-			'background-attachment' => array(
-				'id' => 'background-attachment',
+			'background-attachment'       => array(
+				'id'      => 'background-attachment',
 				'section' => 'Background',
-				'label' => 'Background attachment',
-				'type' => 'radio',
+				'label'   => 'Background attachment',
+				'type'    => 'radio',
 				'default' => 'scroll',
-				'options' => array('fixed' => 'Fixed','scroll' => 'Scroll')
+				'options' => array( 'fixed' => 'Fixed', 'scroll' => 'Scroll' )
 			),
-			'background-color' => array(
-				'id' => 'background-color',
+			'background-color'            => array(
+				'id'      => 'background-color',
 				'section' => 'Background',
-				'label' => 'Page background color',
-				'type' => 'color',
+				'label'   => 'Page background color',
+				'type'    => 'color',
 				'default' => '',
 			),
-
-		  //Header Options
-			'hide-header' => array(
-				'id' => 'hide-header',
+			//Header Options
+			'hide-header'                 => array(
+				'id'      => 'hide-header',
 				'section' => 'Header',
-				'label' => 'Hide header',
-				'type' => 'checkbox',
+				'label'   => 'Hide header',
+				'type'    => 'checkbox',
 				'default' => '',
 			),
-			'header-background-image' => array(
-				'id' => 'header-background-image',
+			'header-background-image'     => array(
+				'id'      => 'header-background-image',
 				'section' => 'Header',
-				'label' => 'Header background image',
-				'type' => 'image',
+				'label'   => 'Header background image',
+				'type'    => 'image',
 				'default' => '',
 			),
-			'header-background-color' => array(
-				'id' => 'header-background-color',
+			'header-background-color'     => array(
+				'id'      => 'header-background-color',
 				'section' => 'Header',
-				'label' => 'Header background color',
-				'type' => 'color',
+				'label'   => 'Header background color',
+				'type'    => 'color',
 				'default' => '',
 			),
-
-		  //Content
-			'hide-breadcrumbs' => array(
-				'id' => 'hide-breadcrumbs',
+			//Content
+			'hide-breadcrumbs'            => array(
+				'id'      => 'hide-breadcrumbs',
 				'section' => 'Content',
-				'label' => 'Hide breadcrumbs',
-				'type' => 'checkbox',
+				'label'   => 'Hide breadcrumbs',
+				'type'    => 'checkbox',
 				'default' => '',
 			),
-			'hide-title' => array(
-				'id' => 'hide-title',
+			'hide-title'                  => array(
+				'id'      => 'hide-title',
 				'section' => 'Content',
-				'label' => 'Hide title',
-				'type' => 'checkbox',
+				'label'   => 'Hide title',
+				'type'    => 'checkbox',
 				'default' => '',
 			),
-
-		  //Footer
-			'hide-footer' => array(
-				'id' => 'hide-footer',
+			//Footer
+			'hide-footer'                 => array(
+				'id'      => 'hide-footer',
 				'section' => 'Footer',
-				'label' => 'Hide footer',
-				'type' => 'checkbox',
+				'label'   => 'Hide footer',
+				'type'    => 'checkbox',
 				'default' => '',
 			),
 
 		);
 	}
-	
+
 	public function custom_fields() {
-		$fields = $this->post_meta;
+		$fields          = $this->post_meta;
 		$field_structure = array();
-		foreach ($fields as $key => $field) {
-			$field_structure[$field['section']][] = $field;
+		foreach ( $fields as $key => $field ) {
+			$field_structure[ $field['section'] ][] = $field;
 		}
 		echo "<div id='ppc-tabs-wrapper'>";
 		echo "<ul class='ppc-sections-nav nav-tab-wrapper'>";
-		  foreach( $field_structure as $sec => $fields ){
+		foreach ( $field_structure as $sec => $fields ) {
 			echo ""
-			. "<li>"
-			  . "<a class='nav-tab' href='#ppc-section-{$sec}'> $sec </a>"
-			. "</li>";
-		  }
+			     . "<li>"
+			     . "<a class='nav-tab' href='#ppc-section-{$sec}'> $sec </a>"
+			     . "</li>";
+		}
 		echo "</ul>";
-		foreach( $field_structure as $sec => $fields ){
+		foreach ( $field_structure as $sec => $fields ) {
 			echo "<div class='ppc-section' id='ppc-section-{$sec}'>";
-			foreach ($fields as $fld){
-				$this->render_field($fld);
+			foreach ( $fields as $fld ) {
+				$this->render_field( $fld );
 			}
 			echo "</div>";
 		}
@@ -445,32 +479,37 @@ final class Pootle_Page_Customizer {
 
 	/**
 	 * Gets value of post meta
-	 * @global type $post
-	 * @param type $section
-	 * @param type $id
-	 * @param type $default
-	 * @param type $post_id
+	 * @global WP_Post $post
+	 *
+	 * @param string $section
+	 * @param string $id
+	 * @param mixed $default
+	 * @param int|bool $post_id
+	 *
 	 * @return string
 	 */
-	protected function get_value($section, $id, $default = null, $post_id=false) {
+	protected function get_value( $section, $id, $default = null, $post_id = false ) {
 		//Getting post id if not set
-		if( !$post_id ){ global $post; $post_id = $post->ID; }
+		if ( ! $post_id ) {
+			global $post;
+			$post_id = $post->ID;
+		}
 
-		$metaKey = $this->get_meta_key($section, $id);
+		$metaKey = $this->get_meta_key( $section, $id );
 
-		$ret = get_post_meta($post_id, $metaKey, true);
-		if (isset($ret) && $ret != false) {
+		$ret = get_post_meta( $post_id, $metaKey, true );
+		if ( isset( $ret ) && $ret != false ) {
 			return $ret;
 		} else {
 			return $default;
 		}
 	}
 
-	private function get_meta_key($section, $id) {
-		return '_'.$this->token . '-' . $section . '-' . $id;
+	private function get_meta_key( $section, $id ) {
+		return '_' . $this->token . '-' . $section . '-' . $id;
 	}
 
-	private function get_field_key($section, $id) {
+	private function get_field_key( $section, $id ) {
 		return $this->token . '[' . $section . '][' . $id . ']';
 	}
 
@@ -479,84 +518,127 @@ final class Pootle_Page_Customizer {
 	 * @since   0.7
 	 * @return  void
 	 */
-	public function styles() {
+	public function public_scripts() {
+
+		wp_enqueue_script( 'page-custo-script', plugins_url( '/assets/js/public.js', __FILE__ ) );
+
+		$videoUrl = $this->get_value( 'Background', 'background-video', false );
+
+		if ( ! empty( $videoUrl ) ) {
+			echo '<script> window.pageCustoVideoUrl = "' . $videoUrl . '";</script>';
+			?>
+			<video id="page-customizer-bg-video" style="display: none;"
+			       preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
+				<?php
+				echo "<source src='{$videoUrl}' type='video/mp4'>";
+				echo "<source src='{$videoUrl}' type='video/webm'>";
+				?>
+				Sorry, your browser does not support HTML5 video.
+			</video>
+			<?php
+		}
+
 		wp_enqueue_style( 'ppc-styles', plugins_url( '/assets/css/style.css', __FILE__ ) );
 		//Header options
-		$hideHeader = $this->get_value('Header', 'hide-header', false);
-		$headerBgColor = $this->get_value('Header', 'header-background-color', null);
-		$headerBgImage = $this->get_value('Header', 'header-background-image', null);
-		
-		//Body options
-		$bgColor = $this->get_value('Background', 'background-color', null);
-		$bgImage = $this->get_value('Background', 'background-image', null);
-		$BgOptions = ' '.$this->get_value('Background', 'background-repeat', null) . ' '
-		  . $this->get_value('Background', 'background-attachment', null) . ' '
-		  . $this->get_value('Background', 'background-position', null);
+		$hideHeader    = $this->get_value( 'Header', 'hide-header', false );
+		$headerBgColor = $this->get_value( 'Header', 'header-background-color', null );
+		$headerBgImage = $this->get_value( 'Header', 'header-background-image', null );
 
-		
+		//Body options
+		$bgColor   = $this->get_value( 'Background', 'background-color', null );
+		$bgImage   = $this->get_value( 'Background', 'background-image', null );
+		if ( 'video' == $this->get_value( 'Background', 'background-type', null ) ) {
+			$bgImage = $this->get_value( 'Background', 'background-responsive-image', null );
+		}
+		$BgOptions = ' ' . $this->get_value( 'Background', 'background-repeat', null ) . ' '
+		             . $this->get_value( 'Background', 'background-attachment', null ) . ' '
+		             . $this->get_value( 'Background', 'background-position', null );
+
+
 		//Content
-		$hideBread = $this->get_value('Content', 'hide-breadcrumbs', null);
-		$hideTitle = $this->get_value('Content', 'hide-title', null);
+		$hideBread = $this->get_value( 'Content', 'hide-breadcrumbs', null );
+		$hideTitle = $this->get_value( 'Content', 'hide-title', null );
 		//Footer options
-		$hideFooter = $this->get_value('Footer', 'hide-footer', false);
+		$hideFooter = $this->get_value( 'Footer', 'hide-footer', false );
 		//Init $css
 		$css = '/*PootlePressPageCustomizer*/';
 
 		//Header styles
 		$css .= '#masthead, #header, #site-header, .site-header, .tc-header{';
-		if( $hideHeader )		$css .= "display : none !important;";
-		if( $headerBgColor )	$css .= "background-color : {$headerBgColor} !important";
-		if( $headerBgImage )	$css .= "background-image : url({$headerBgImage}) !important";
+		if ( $hideHeader ) {
+			$css .= "display : none !important;";
+		}
+		if ( $headerBgColor ) {
+			$css .= "background-color : {$headerBgColor} !important";
+		}
+		if ( $headerBgImage ) {
+			$css .= "background-image : url({$headerBgImage}) !important";
+		}
 		//Header styles END
 		$css .= "}\n";
-		
+
 		//Body styles
 		$css .= 'body.pootle-page-customizer-active {';
-		if( $bgColor )			$css .= "background-color : {$bgColor} !important;";
-		if( $bgImage )			$css .= "background : url({$bgImage}){$BgOptions}  !important;";
+		if ( $bgColor ) {
+			$css .= "background-color : {$bgColor} !important;";
+		}
+		if ( $bgImage ) {
+			$css .= "background : url({$bgImage}){$BgOptions}  !important;";
+		}
 		//Body styles END
 		$css .= "}\n";
 
 		//Content
-		if($hideBread)			$css .= "#breadcrumbs, #breadcrumb, .breadcrumbs, .breadcrumb, .breadcrumbs-trail, .wc-breadcrumbs, .wc-breadcrumb, .woocommerce-breadcrumb, .woocommerce-breadcrumbs {display : none !important;}\n";
-		if($hideTitle)			$css .= ".entry-title {display : none !important;}\n";
+		if ( $hideBread ) {
+			$css .= "#breadcrumbs, #breadcrumb, .breadcrumbs, .breadcrumb, .breadcrumbs-trail, .wc-breadcrumbs, .wc-breadcrumb, .woocommerce-breadcrumb, .woocommerce-breadcrumbs {display : none !important;}\n";
+		}
+		if ( $hideTitle ) {
+			$css .= ".entry-title {display : none !important;}\n";
+		}
 
 		//Footer style
 		$css .= '#footer, #site-footer, .site-footer{';
-		if( $hideFooter )		$css .= "display : none !important;";
+		if ( $hideFooter ) {
+			$css .= "display : none !important;";
+		}
 		//Footer styles END
 		$css .= "}\n";
 		wp_add_inline_style( 'ppc-styles', $css );
 	}
 
 	/**
-	 * Enqueue Js 
+	 * Enqueue Js
 	 * @global type $pagenow
 	 * @return null
 	 */
 	public function admin_scripts() {
 		global $pagenow;
 
-		if(
-		  (!isset($pagenow) || !($pagenow == 'post-new.php' || $pagenow == 'post.php'))
-		  OR
-		  (isset($_REQUEST['post-type']) && strtolower($_REQUEST['post_type']) != 'page')
+		if (
+			( ! isset( $pagenow ) || ! ( $pagenow == 'post-new.php' || $pagenow == 'post.php' ) )
+			OR
+			( isset( $_REQUEST['post-type'] ) && strtolower( $_REQUEST['post_type'] ) != 'page' )
 		) {
 			return;
 		}
 
 		// only in post and page create and edit screen
 
-		wp_enqueue_script('wp-color-picker');
-		wp_enqueue_script('jquery-ui-tabs');
-		wp_enqueue_script('ppc-admin-script', trailingslashit($this->plugin_url) . 'assets/js/admin/admin.js', array('wp-color-picker', 'jquery', 'thickbox', 'jquery-ui-tabs'));
+		wp_enqueue_script( 'wp-color-picker' );
+		wp_enqueue_script( 'jquery-ui-tabs' );
+		wp_enqueue_script( 'ppc-admin-script', trailingslashit( $this->plugin_url ) . 'assets/js/admin/admin.js', array(
+			'wp-color-picker',
+			'jquery',
+			'thickbox',
+			'jquery-ui-tabs'
+		) );
 
-		wp_enqueue_style('wp-color-picker');
-		wp_enqueue_style('thickbox');
-		wp_enqueue_style('ppc-admin-style', trailingslashit($this->plugin_url) . 'assets/css/admin/admin.css');
+		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_style( 'thickbox' );
+		wp_enqueue_style( 'ppc-admin-style', trailingslashit( $this->plugin_url ) . 'assets/css/admin/admin.css' );
 	}
 
-	
+
 	/**
 	 * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
 	 *
@@ -572,22 +654,23 @@ final class Pootle_Page_Customizer {
 	 */
 	public function body_class( $classes ) {
 		$this->body_classes[] = 'pootle-page-customizer-active';
-		return array_merge($classes, $this->body_classes);
+
+		return array_merge( $classes, $this->body_classes );
 	}
 
 	/**
 	 * Render a field of a given type.
 	 * @access public
 	 * @since 0.7
+	 *
 	 * @param array $args The field parameters.
 	 * @param string $output_format = ( post || termEdit || termAdd )
 	 * @param array $tax_data - Taxonomy data if rendering for taxonomy
+	 *
 	 * @return string
 	 */
-	public function render_field ( $args, $output_format = 'post', $tax_data=null ) {
+	public function render_field( $args, $output_format = 'post', $tax_data = null ) {
 		$html = '';
-
-		if ( ! in_array( $args['type'], array( 'text', 'checkbox', 'radio', 'textarea', 'select', 'color', 'image' ) ) ) return ''; // Supported field type sanity check.
 
 		// Make sure we have some kind of default, if the key isn't set.
 		if ( ! isset( $args['default'] ) ) {
@@ -601,24 +684,28 @@ final class Pootle_Page_Customizer {
 		}
 
 		// Construct the key.
-		$key = $this->get_field_key($args['section'], $args['id']);
-		
+		$key = $this->get_field_key( $args['section'], $args['id'] );
+		$id  = $this->get_meta_key( $args['section'], $args['id'] );
+
 		//Prefix to field
 		$html_prefix = ''
-		. '<div class="field ppc-field ' . $args['id'] . '">'
-		. '<label class="label" for="' . esc_attr($key) . '">' . esc_html($args['label']) . '</label>'
-		. '<div class="control">';
+		               . "<div class='field ppc-field field-section-{$args['section']} {$args['id']}'>"
+		               . '<label class="label" for="' . esc_attr( $key ) . '">' . esc_html( $args['label'] ) . '</label>'
+		               . '<div class="control">';
 
 		//Getting current value
 		$current_val = $this->get_value( $args['section'], $args['id'], $args['default'] );
 
 		//Suffix to field
 		$html_suffix = ''
-			. '</div>'
-			. '</div>';
+		               . '</div>'
+		               . '</div>';
 
 		//Prefix
 		$html .= $html_prefix;
+
+		//Adding id
+		$args['id'] = $id;
 
 		//Output the field
 		$method_output = $this->$method( $key, $args, $current_val );
@@ -627,15 +714,18 @@ final class Pootle_Page_Customizer {
 		// Output the description
 		if ( isset( $args['description'] ) ) {
 			$description = '<p class="description">' . wp_kses_post( $args['description'] ) . '</p>' . "\n";
-			if ( in_array( $args['type'], (array)apply_filters( 'wf_newline_description_fields', array( 'textarea', 'select' ) ) ) ) {
-					$description = wpautop( $description );
-				}
+			if ( in_array( $args['type'], (array) apply_filters( 'wf_newline_description_fields', array(
+				'textarea',
+				'select'
+			) ) ) ) {
+				$description = wpautop( $description );
+			}
 			$html .= $description;
 		}
 
 		//Suffix
 		$html .= $html_suffix;
-		
+
 		echo $html;
 	}
 
@@ -643,12 +733,15 @@ final class Pootle_Page_Customizer {
 	 * Render HTML markup for the "text" field type.
 	 * @access  protected
 	 * @since   1.0
-	 * @param   string $key  The unique ID of this field.
-	 * @param   array $args  Arguments used to construct this field.
+	 *
+	 * @param   string $key The unique ID of this field.
+	 * @param   array $args Arguments used to construct this field.
+	 *
 	 * @return  string       HTML markup for the field.
 	 */
-	protected function render_field_text ( $key, $args, $current_val=null ) {
-		$html = '<input id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" size="40" type="text" value="' . esc_attr( $current_val ) . '" />' . "\n";
+	protected function render_field_text( $key, $args, $current_val = null ) {
+		$html = '<input id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '" size="40" type="text" value="' . esc_attr( $current_val ) . '" />' . "\n";
+
 		return $html;
 	}
 
@@ -656,17 +749,20 @@ final class Pootle_Page_Customizer {
 	 * Render HTML markup for the "radio" field type.
 	 * @access  protected
 	 * @since   1.0
-	 * @param   string $key  The unique ID of this field.
-	 * @param   array $args  Arguments used to construct this field.
+	 *
+	 * @param   string $key The unique ID of this field.
+	 * @param   array $args Arguments used to construct this field.
+	 *
 	 * @return  string       HTML markup for the field.
 	 */
-	protected function render_field_radio ( $key, $args, $current_val=null ) {
+	protected function render_field_radio( $key, $args, $current_val = null ) {
 		$html = '';
-		if ( isset( $args['options'] ) && ( 0 < count( (array)$args['options'] ) ) ) {
+		if ( isset( $args['options'] ) && ( 0 < count( (array) $args['options'] ) ) ) {
 			foreach ( $args['options'] as $k => $v ) {
 				$html .= '<label for="' . esc_attr( $key ) . '"><input type="radio" name="' . esc_attr( $key ) . '" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $current_val ), $k, false ) . ' /> ' . $v . '</label><br>' . "\n";
 			}
 		}
+
 		return $html;
 	}
 
@@ -674,12 +770,15 @@ final class Pootle_Page_Customizer {
 	 * Render HTML markup for the "textarea" field type.
 	 * @access  protected
 	 * @since   1.0
-	 * @param   string $key  The unique ID of this field.
-	 * @param   array $args  Arguments used to construct this field.
+	 *
+	 * @param   string $key The unique ID of this field.
+	 * @param   array $args Arguments used to construct this field.
+	 *
 	 * @return  string       HTML markup for the field.
 	 */
-	protected function render_field_textarea ( $key, $args, $current_val=null ) {
-		$html = '<textarea id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" cols="42" rows="5">' . $current_val . '</textarea>' . "\n";
+	protected function render_field_textarea( $key, $args, $current_val = null ) {
+		$html = '<textarea id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '" cols="42" rows="5">' . $current_val . '</textarea>' . "\n";
+
 		return $html;
 	}
 
@@ -687,12 +786,15 @@ final class Pootle_Page_Customizer {
 	 * Render HTML markup for the "checkbox" field type.
 	 * @access  protected
 	 * @since   1.0
-	 * @param   string $key  The unique ID of this field.
-	 * @param   array $args  Arguments used to construct this field.
+	 *
+	 * @param   string $key The unique ID of this field.
+	 * @param   array $args Arguments used to construct this field.
+	 *
 	 * @return  string       HTML markup for the field.
 	 */
-	protected function render_field_checkbox ( $key, $args, $current_val=null ) {
-		$html = '<input id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" type="checkbox" value="true" ' . checked( $current_val, 'true', false ) . ' />';
+	protected function render_field_checkbox( $key, $args, $current_val = null ) {
+		$html = '<input id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '" type="checkbox" value="true" ' . checked( $current_val, 'true', false ) . ' />';
+
 		return $html;
 	}
 
@@ -700,19 +802,22 @@ final class Pootle_Page_Customizer {
 	 * Render HTML markup for the "select" field type.
 	 * @access  protected
 	 * @since   1.0
-	 * @param   string $key  The unique ID of this field.
-	 * @param   array $args  Arguments used to construct this field.
+	 *
+	 * @param   string $key The unique ID of this field.
+	 * @param   array $args Arguments used to construct this field.
+	 *
 	 * @return  string       HTML markup for the field.
 	 */
-	protected function render_field_select ( $key, $args, $current_val=null ) {
+	protected function render_field_select( $key, $args, $current_val = null ) {
 		$html = '';
-		if ( isset( $args['options'] ) && ( 0 < count( (array)$args['options'] ) ) ) {
-			$html .= '<select id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '">' . "\n";
+		if ( isset( $args['options'] ) && ( 0 < count( (array) $args['options'] ) ) ) {
+			$html .= '<select id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '">' . "\n";
 			foreach ( $args['options'] as $k => $v ) {
 				$html .= '<option value="' . esc_attr( $k ) . '"' . selected( esc_attr( $current_val ), $k, false ) . '>' . esc_html( $v ) . '</option>' . "\n";
 			}
 			$html .= '</select>' . "\n";
 		}
+
 		return $html;
 	}
 
@@ -720,12 +825,15 @@ final class Pootle_Page_Customizer {
 	 * Render HTML markup for the "color" field type.
 	 * @access  protected
 	 * @since   1.0
-	 * @param   string $key  The unique ID of this field.
-	 * @param   array $args  Arguments used to construct this field.
+	 *
+	 * @param   string $key The unique ID of this field.
+	 * @param   array $args Arguments used to construct this field.
+	 *
 	 * @return  string       HTML markup for the field.
 	 */
-	protected function render_field_color( $key, $args, $current_val=null ) {
-		$html = '<input class="color-picker-hex" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" type="text" value="' . esc_attr( $current_val ) . '" />';
+	protected function render_field_color( $key, $args, $current_val = null ) {
+		$html = '<input class="color-picker-hex" id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '" type="text" value="' . esc_attr( $current_val ) . '" />';
+
 		return $html;
 	}
 
@@ -733,12 +841,31 @@ final class Pootle_Page_Customizer {
 	 * Render HTML markup for the "image" field type.
 	 * @access  protected
 	 * @since   1.0
-	 * @param   string $key  The unique ID of this field.
-	 * @param   array $args  Arguments used to construct this field.
+	 *
+	 * @param   string $key The unique ID of this field.
+	 * @param   array $args Arguments used to construct this field.
+	 *
 	 * @return  string       HTML markup for the field.
 	 */
-	protected  function render_field_image( $key, $args, $current_val=null ) {
-		$html = '<input class="image-upload-path" type="text" id="' . esc_attr($key) . '" style="width: 200px; max-width: 100%;" name="' . esc_attr($key) . '" value="' . esc_attr( $current_val ) . '" /><button class="button upload-button">Upload</button>';
+	protected function render_field_image( $key, $args, $current_val = null ) {
+		$html = '<input class="image-upload-path" type="text" id="' . esc_attr( $args['id'] ) . '" style="width: 200px; max-width: 100%;" name="' . esc_attr( $key ) . '" value="' . esc_attr( $current_val ) . '" /><button class="button upload-button">Upload</button>';
+
+		return $html;
+	}
+
+	/**
+	 * Render HTML markup for the "image" field type.
+	 * @access  protected
+	 * @since   1.0
+	 *
+	 * @param   string $key The unique ID of this field.
+	 * @param   array $args Arguments used to construct this field.
+	 *
+	 * @return  string       HTML markup for the field.
+	 */
+	protected function render_field_video( $key, $args, $current_val = null ) {
+		$html = '<input class="video-upload-path" type="text" id="' . esc_attr( $args['id'] ) . '" style="width: 200px; max-width: 100%;" name="' . esc_attr( $key ) . '" value="' . esc_attr( $current_val ) . '" /><button class="button video-upload-button">Upload Video</button>';
+
 		return $html;
 	}
 
