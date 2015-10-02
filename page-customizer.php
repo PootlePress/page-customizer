@@ -275,6 +275,25 @@ final class Pootle_Page_Customizer {
 		add_action( 'customize_preview_init', array( $this, 'customize_preview_js' ) );
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 		add_action( 'admin_notices', array( $this, 'customizer_notice' ) );
+		add_action( 'admin_bar_menu', array( $this, 'add_item' ), 999 );
+	}
+
+	/**
+	 * @param $admin_bar
+	 */
+	function add_item( $admin_bar ) {
+		global $post;
+		if ( is_page() ) {
+			$args = array(
+				'id'    => 'page-custo-link',
+				'title' => 'Customize Page',
+				'href'  => admin_url( "customize.php?post_id={$post->ID}&autofocus[panel]=lib-pootle-page-customizer&url=" . get_permalink( $post->ID ) . "?post_id={$post->ID}" ),
+				'meta'  => array(
+					'title' => __( 'Customize this page in customizer' ), // Text will be shown on hovering
+				),
+			);
+			$admin_bar->add_menu( $args );
+		}
 	}
 
 	/**

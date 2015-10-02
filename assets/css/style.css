@@ -22,3 +22,17 @@ video#page-customizer-bg-video {
 		display: none;
 	}
 }
+
+#wp-admin-bar-page-custo-link .ab-item:before{
+	content: '\f540';
+	top: 2px;
+	position: relative;
+	float: left;
+	font: 400 20px/1 dashicons;
+	speak: none;
+	padding: 4px 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-image: none!important;
+	margin-right: 6px;
+}
