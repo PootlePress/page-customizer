@@ -9,7 +9,7 @@ global $page_customizer_fields;
 $page_customizer_fields = array(
 
 	//Background Controls
-	'background-type'             => array(
+	'background-type' => array(
 		'id'      => 'background-type',
 		'section' => 'Background',
 		'label'   => 'Background',
@@ -21,7 +21,7 @@ $page_customizer_fields = array(
 		),
 		'default' => '',
 	),
-	'background-video'            => array(
+	'background-video' => array(
 		'id'      => 'background-video',
 		'section' => 'Background',
 		'label'   => 'Background Video',
@@ -36,14 +36,14 @@ $page_customizer_fields = array(
 		'type'    => 'image',
 		'default' => '',
 	),
-	'background-image'            => array(
+	'background-image' => array(
 		'id'      => 'background-image',
 		'section' => 'Background',
 		'label'   => 'Page background image',
 		'type'    => 'image',
 		'default' => '',
 	),
-	'background-attachment'       => array(
+	'background-attachment' => array(
 		'id'      => 'background-attachment',
 		'section' => 'Background',
 		'label'   => 'Background attachment',
@@ -51,7 +51,7 @@ $page_customizer_fields = array(
 		'default' => 'scroll',
 		'choices' => array( 'fixed' => 'Fixed', 'scroll' => 'Scroll' )
 	),
-	'background-color'            => array(
+	'background-color' => array(
 		'id'      => 'background-color',
 		'section' => 'Background',
 		'label'   => 'Page background color',
@@ -60,21 +60,21 @@ $page_customizer_fields = array(
 	),
 
 	//Header Options
-	'hide-header'                 => array(
+	'hide-header' => array(
 		'id'      => 'hide-header',
 		'section' => 'Header',
 		'label'   => 'Hide header',
 		'type'    => 'checkbox',
 		'default' => '',
 	),
-	'header-background-image'     => array(
+	'header-background-image' => array(
 		'id'      => 'header-background-image',
 		'section' => 'Header',
 		'label'   => 'Header background image',
 		'type'    => 'image',
 		'default' => '',
 	),
-	'header-background-color'     => array(
+	'header-background-color' => array(
 		'id'      => 'header-background-color',
 		'section' => 'Header',
 		'label'   => 'Header background color',
@@ -83,14 +83,21 @@ $page_customizer_fields = array(
 	),
 
 	//Content
-	'hide-breadcrumbs'            => array(
+	'hide-breadcrumbs' => array(
 		'id'      => 'hide-breadcrumbs',
 		'section' => 'Content',
 		'label'   => 'Hide breadcrumbs',
 		'type'    => 'checkbox',
 		'default' => '',
 	),
-	'hide-title'                  => array(
+	'hide-sidebar' => array(
+		'id'      => 'hide-sidebar',
+		'section' => 'Content',
+		'label'   => 'Hide sidebar',
+		'type'    => 'checkbox',
+		'default' => '',
+	),
+	'hide-title' => array(
 		'id'      => 'hide-title',
 		'section' => 'Content',
 		'label'   => 'Hide title',
@@ -99,7 +106,7 @@ $page_customizer_fields = array(
 	),
 
 	//Footer
-	'hide-footer'                 => array(
+	'hide-footer' => array(
 		'id'      => 'hide-footer',
 		'section' => 'Footer',
 		'label'   => 'Hide footer',
@@ -107,4 +114,40 @@ $page_customizer_fields = array(
 		'default' => '',
 	),
 
+	//Mobile
+	'mob-background-image' => array(
+		'id'      => 'mob-background-image',
+		'section' => 'Mobile',
+		'label'   => 'Page background image for Mobile view',
+		'type'    => 'image',
+		'default' => '',
+	),
+	'mob-background-color' => array(
+		'id'      => 'mob-background-color',
+		'section' => 'Mobile',
+		'label'   => 'Page background color for Mobile view',
+		'type'    => 'color',
+		'default' => '',
+	),
+	'mob-hide-footer' => array(
+		'id'      => 'mob-hide-footer',
+		'section' => 'Mobile',
+		'label'   => 'Hide footer in Mobile view',
+		'type'    => 'checkbox',
+		'default' => '',
+	),
+	'mob-hide-header' => array(
+		'id'      => 'mob-hide-header',
+		'section' => 'Mobile',
+		'label'   => 'Hide header in Mobile view',
+		'type'    => 'checkbox',
+		'default' => '',
+	),
+	'mob-hide-sidebar' => array(
+		'id'      => 'mob-hide-sidebar',
+		'section' => 'Mobile',
+		'label'   => 'Hide sidebar in Mobile view',
+		'type'    => 'checkbox',
+		'default' => '',
+	),
 );

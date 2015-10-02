@@ -357,7 +357,8 @@ final class Pootle_Page_Customizer {
 	 * @since 1.0.0
 	 */
 	public function customizer_script() {
-		wp_enqueue_script( 'pnm-customize-controls', plugin_dir_url( __FILE__ ) . 'assets/js/customizer.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( 'pppc-customize-controls', plugin_dir_url( __FILE__ ) . 'assets/js/customizer.js', array( 'jquery' ), false, true );
+		wp_enqueue_style( 'pppc-customize-controls-styles', plugin_dir_url( __FILE__ ) . 'assets/css/customizer.css' );
 	}
 
 	public function save_post( $postID ) {
@@ -424,16 +425,15 @@ final class Pootle_Page_Customizer {
 	 */
 	public function public_scripts() {
 
-		if ( ! is_single() && ! is_page() ) {
-			return false;
-		}
+		if ( ! is_single() && ! is_page() ) { return false; }
 
+		wp_enqueue_style( 'ppc-styles', plugins_url( '/assets/css/style.css', __FILE__ ) );
 		wp_enqueue_script( 'page-custo-script', plugins_url( '/assets/js/public.js', __FILE__ ) );
 
-		$videoType = $this->get_value( 'Background', 'background-type', false );
+		$bodyBgType = $this->get_value( 'Background', 'background-type', false );
 		$videoUrl = $this->get_value( 'Background', 'background-video', false );
 
-		if ( 'video' == $videoType && ! empty( $videoUrl ) ) {
+		if ( 'video' == $bodyBgType && ! empty( $videoUrl ) ) {
 			echo '<script> window.pageCustoVideoUrl = "' . $videoUrl . '";</script>';
 			?>
 			<video id="page-customizer-bg-video" style="display: none;"
@@ -447,7 +447,6 @@ final class Pootle_Page_Customizer {
 			<?php
 		}
 
-		wp_enqueue_style( 'ppc-styles', plugins_url( '/assets/css/style.css', __FILE__ ) );
 		//Header options
 		$hideHeader    = $this->get_value( 'Header', 'hide-header', false );
 		$headerBgColor = $this->get_value( 'Header', 'header-background-color', null );
@@ -456,7 +455,7 @@ final class Pootle_Page_Customizer {
 		//Body options
 		$bgColor   = $this->get_value( 'Background', 'background-color', null );
 		$bgImage   = $this->get_value( 'Background', 'background-image', null );
-		if ( 'video' == $videoType ) {
+		if ( 'video' == $bodyBgType ) {
 			$bgImage = $this->get_value( 'Background', 'background-responsive-image', null );
 		}
 		$BgOptions = ' no-repeat '
@@ -466,6 +465,7 @@ final class Pootle_Page_Customizer {
 		//Content
 		$hideBread = $this->get_value( 'Content', 'hide-breadcrumbs', null );
 		$hideTitle = $this->get_value( 'Content', 'hide-title', null );
+		$hideSidebar = $this->get_value( 'Content', 'hide-sidebar', null );
 		//Footer options
 		$hideFooter = $this->get_value( 'Footer', 'hide-footer', false );
 		//Init $css
@@ -487,7 +487,7 @@ final class Pootle_Page_Customizer {
 
 		//Body styles
 		$css .= 'body.pootle-page-customizer-active {';
-		if ( 'color' == $videoType && $bgColor ) {
+		if ( 'color' == $bodyBgType && $bgColor ) {
 			$css .= "background: {$bgColor} !important;";
 		} else {
 			$css .= "background : url({$bgImage}){$BgOptions} !important;";
@@ -506,6 +506,11 @@ final class Pootle_Page_Customizer {
 			$css .= ".entry-title {display : none !important;}\n";
 		}
 
+		if ( $hideSidebar ) {
+			$css .= "aside, .sidebar, .side-bar {display : none !important;}\n";
+			$css .= "#content, .content, .content-area { width : 100% !important;}\n";
+		}
+
 		//Footer style
 		$css .= '#footer, #site-footer, .site-footer{';
 		if ( $hideFooter ) {
@@ -513,7 +518,39 @@ final class Pootle_Page_Customizer {
 		}
 		//Footer styles END
 		$css .= "}\n";
+
+		$css .= '@media only screen and (max-width:768px) {';
+		$css .= $this->mobile_styles();
+		$css .= '}';
+
 		wp_add_inline_style( 'ppc-styles', $css );
+	}
+
+	/**
+	 * Outputs mobile styles
+	 * @return string Mobile styles
+	 */
+	public function mobile_styles() {
+		$css     = '';
+		$bgColor = $this->get_value( 'Mobile', 'mob-background-color', null );
+		$bgImage = $this->get_value( 'Mobile', 'mob-background-image', null );
+
+		$css .= "body.pootle-page-customizer-active\n { background-color : {$bgColor} !important;\n background-image : url({$bgImage}) !important;\n }\n";
+
+		if ( $this->get_value( 'Mobile', 'mob-hide-footer', false ) ) {
+			$css .= "#footer, #site-footer, .site-footer{ display : none !important; }";
+		}
+
+		if ( $this->get_value( 'Mobile', 'mob-hide-header', false ) ) {
+			$css .= "#masthead, #header, #site-header, .site-header, .tc-header{ display : none !important; }";
+		}
+
+		if ( $this->get_value( 'Mobile', 'mob-hide-sidebar', null ) ) {
+			$css .= "aside, .sidebar, .side-bar {display : none !important;}\n";
+			$css .= "#content, .content, .content-area { width : 100% !important;}\n";
+		}
+
+		return $css;
 	}
 
 	/**
