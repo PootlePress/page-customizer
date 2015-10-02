@@ -95,11 +95,23 @@ class Lib_Customize_Setting extends WP_Customize_Setting {
 	 * @return mixed The value.
 	 */
 	public function value() {
+		global $wp_filter;
+
+		if ( empty( $wp_filter['get_post_metadata'] ) ) {
+			$wp_filter['get_post_metadata'] = array();
+		}
+
+		$post_meta_filters = $wp_filter['get_post_metadata'];
+
+		$wp_filter['get_post_metadata'] = array();
+
 		$values = get_post_meta(
 			$_GET['post_id'],
 			$this->id_data[ 'base' ],
 			true
 		);
+
+		$wp_filter['get_post_metadata'] = $post_meta_filters;
 
 		return $this->multidimensional_get( $values, $this->id_data[ 'keys' ], $this->default );
 	}
