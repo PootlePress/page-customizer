@@ -35,15 +35,19 @@ class Lib_Customize_Setting extends WP_Customize_Setting {
 		if ( ! isset( $this->_previewed_blog_id ) ) {
 			$this->_previewed_blog_id = get_current_blog_id();
 		}
+
 		add_filter( "get_post_metadata", array( $this, 'filter_post_metadata' ), 10, 4 );
+
+		if ( $_GET['post_id'] != get_option( 'lib_current_post_meta' ) ) {
+
+			update_option( 'lib_current_post_meta', $_GET['post_id'] );
+		}
 	}
 
 	public function filter_post_metadata( $set, $object_id, $meta_key, $single ) {
 		if ( $object_id != $_GET['post_id'] || $meta_key != $this->id_data[ 'base' ] ) {
 			return $set;
 		}
-
-		update_option( 'lib_current_post_meta', $object_id );
 
 		if ( is_array( $set ) ) {
 			$set[0] = wp_parse_args(  $this->_preview_filter( $set[0] ), $set[0] );
@@ -70,11 +74,14 @@ class Lib_Customize_Setting extends WP_Customize_Setting {
 
 		$options = get_post_meta( $post_id, $this->id_data['base'], true );
 
+		if ( empty( $options ) ) {
+			$options = array();
+		}
+
 		if ( is_array( $options ) ) {
 
 			$options = $this->multidimensional_replace( $options, $this->id_data[ 'keys' ], $value );
 
-			update_option( 'lib_updated', $options );
 		}
 
 		return update_post_meta( $post_id, $this->id_data['base'], $options );
