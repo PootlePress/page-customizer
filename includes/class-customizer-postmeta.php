@@ -42,7 +42,6 @@ class Lib_Customizer_Postmeta {
 		$this->id = $id;
 		$this->title = $title;
 		$this->fields = $fields;
-
 		$this->controls_classes = array(
 			'text'          => 'WP_Customize_Control',
 			'checkbox'      => 'WP_Customize_Control',
@@ -65,11 +64,6 @@ class Lib_Customizer_Postmeta {
 	 * @since 2.0.0
 	 */
 	public function customizer_register( WP_Customize_Manager $manager ) {
-
-		if ( empty( $_GET['post_id'] ) ) {
-			return;
-		}
-
 		if ( ! class_exists( 'Lib_Customize_Setting' ) ) {
 			require 'class-customize-setting.php';
 		}
@@ -89,6 +83,13 @@ class Lib_Customizer_Postmeta {
 				$sections[ $section ] = $option['section'];
 				$option['section'] = $section;
 			}
+		}
+
+		//Fields
+		$this->add_controls( $manager, $fields );
+
+		if ( empty( $_GET['post_id'] ) ) {
+			return;
 		}
 
 		if ( ! empty( $sections ) ) {
@@ -114,9 +115,6 @@ class Lib_Customizer_Postmeta {
 			) );
 
 		}
-
-		//Fields
-		$this->add_controls( $manager, $fields );
 	}
 
 	/**
@@ -149,10 +147,14 @@ class Lib_Customizer_Postmeta {
 				$option['id'],
 				array(
 					'default' => $option['default'],
-					'type' => 'lib_post_meta'
+					'type' => 'post_meta'
 				)
 			)
 		);
+
+		if ( empty( $_GET['post_id'] ) ) {
+			return;
+		}
 
 		//Create a section class
 		if ( ! empty( $this->controls_classes[ $option['type'] ] ) ){

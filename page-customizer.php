@@ -272,7 +272,6 @@ final class Pootle_Page_Customizer {
 
 		add_action( 'admin_print_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'public_scripts' ) );
-		add_action( 'customize_register', array( $this, 'customize_register' ) );
 		add_action( 'customize_preview_init', array( $this, 'customize_preview_js' ) );
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 		add_action( 'admin_notices', array( $this, 'customizer_notice' ) );
@@ -285,30 +284,53 @@ final class Pootle_Page_Customizer {
 	 * @return  void
 	 */
 	public function customizer_notice() {
-		$notices = get_option( 'activation_notice' );
-
-		if ( $notices = get_option( 'activation_notice' ) ) {
+		if ( $notices = get_option( 'page_custo_activation_notice' ) ) {
 
 			foreach ( $notices as $notice ) {
 				echo '<div class="updated">' . $notice . '</div>';
 			}
 
-			delete_option( 'activation_notice' );
+			delete_option( 'page_custo_activation_notice' );
 		}
-	}
-
-	/**
-	 * Customizer Controls and settings
-	 *
-	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
-	 */
-	public function customize_register( $wp_customize ) {/*Placeholder for future*/
 	}
 
 	public function register_meta_box() {
 		foreach ( $this->supported_post_types as $post_type ) {
 			add_meta_box( 'ppc-meta-box', 'Page Customizer settings', array( $this, 'custom_fields' ), $post_type );
 		}
+	}
+
+	public function custom_fields() {
+		global $post;
+
+		$fields          = $this->fields;
+		$field_structure = array();
+		foreach ( $fields as $key => $field ) {
+			$field_structure[ $field['section'] ][] = $field;
+		}
+		echo "<div id='ppc-tabs-wrapper'>";
+		echo "<ul class='ppc-sections-nav nav-tab-wrapper'>";
+		foreach ( $field_structure as $sec => $fields ) {
+			echo ""
+			     . "<li>"
+			     . "<a class='nav-tab' href='#ppc-section-{$sec}'> $sec </a>"
+			     . "</li>";
+		}
+		echo "</ul>";
+		foreach ( $field_structure as $sec => $fields ) {
+			echo "<div class='ppc-section' id='ppc-section-{$sec}'>";
+			foreach ( $fields as $fld ) {
+				$this->render_field( $fld );
+			}
+			echo "</div>";
+		}
+		echo '</div>';
+		echo '<a ' .
+			 'style="margin: 10px auto 0 auto; display: block; width: 169px; text-align: center; padding: 0;"' .
+		     'href="' . admin_url( "customize.php?post_id={$post->ID}&autofocus[panel]=lib-pootle-page-customizer&url=" . get_permalink( $post->ID ). "?post_id={$post->ID}" ) . '" ' .
+		     'class="button button-primary">' .
+		     'Customize in Customizer' .
+		     '</a>';
 	}
 
 	public function save_post( $postID ) {
@@ -332,31 +354,6 @@ final class Pootle_Page_Customizer {
 	private function get_meta_fields() {
 		global $page_customizer_fields;
 		$this->fields = $page_customizer_fields;
-	}
-
-	public function custom_fields() {
-		$fields          = $this->fields;
-		$field_structure = array();
-		foreach ( $fields as $key => $field ) {
-			$field_structure[ $field['section'] ][] = $field;
-		}
-		echo "<div id='ppc-tabs-wrapper'>";
-		echo "<ul class='ppc-sections-nav nav-tab-wrapper'>";
-		foreach ( $field_structure as $sec => $fields ) {
-			echo ""
-			     . "<li>"
-			     . "<a class='nav-tab' href='#ppc-section-{$sec}'> $sec </a>"
-			     . "</li>";
-		}
-		echo "</ul>";
-		foreach ( $field_structure as $sec => $fields ) {
-			echo "<div class='ppc-section' id='ppc-section-{$sec}'>";
-			foreach ( $fields as $fld ) {
-				$this->render_field( $fld );
-			}
-			echo "</div>";
-		}
-		echo '</div>';
 	}
 
 	/**

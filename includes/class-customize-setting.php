@@ -16,6 +16,13 @@
  * @see WP_Customize_Manager
  */
 class Lib_Customize_Setting extends WP_Customize_Setting {
+
+	/**
+	 * @access public
+	 * @var string
+	 */
+	public $type = 'post_meta';
+
 	/**
 	 * Handle previewing the setting.
 	 *
@@ -32,9 +39,11 @@ class Lib_Customize_Setting extends WP_Customize_Setting {
 	}
 
 	public function filter_post_metadata( $set, $object_id, $meta_key, $single ) {
-		if ( $meta_key != $this->id_data[ 'base' ] ) {
+		if ( $object_id != $_GET['post_id'] || $meta_key != $this->id_data[ 'base' ] ) {
 			return $set;
 		}
+
+		update_option( 'lib_current_post_meta', $object_id );
 
 		if ( is_array( $set ) ) {
 			$set[0] = wp_parse_args(  $this->_preview_filter( $set[0] ), $set[0] );
@@ -46,7 +55,6 @@ class Lib_Customize_Setting extends WP_Customize_Setting {
 		return $set;
 	}
 
-
 	/**
 	 * Save the value of the setting, using the related API.
 	 *
@@ -57,12 +65,19 @@ class Lib_Customize_Setting extends WP_Customize_Setting {
 	 */
 
 	protected function update( $value ) {
-		$options = get_post_meta( $_GET['post_id'], $this->id_data[ 'base' ], true );
 
-		$options = $this->multidimensional_replace( $options, $this->id_data[ 'keys' ], $value );
-		if ( isset( $options ) )
-			return update_post_meta( $_GET['post_id'], $this->id_data[ 'base' ], $options );
+		$post_id = get_option( 'lib_current_post_meta' );
 
+		$options = get_post_meta( $post_id, $this->id_data['base'], true );
+
+		if ( is_array( $options ) ) {
+
+			$options = $this->multidimensional_replace( $options, $this->id_data[ 'keys' ], $value );
+
+			update_option( 'lib_updated', $options );
+		}
+
+		return update_post_meta( $post_id, $this->id_data['base'], $options );
 	}
 
 	/**
