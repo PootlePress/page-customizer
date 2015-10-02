@@ -43,27 +43,6 @@ $page_customizer_fields = array(
 		'type'    => 'image',
 		'default' => '',
 	),
-	'background-repeat'           => array(
-		'id'      => 'background-repeat',
-		'section' => 'Background',
-		'label'   => 'Background repeat',
-		'type'    => 'radio',
-		'default' => 'repeat',
-		'choices' => array(
-			'no-repeat' => 'No Repeat',
-			'repeat'    => 'Tile',
-			'repeat-x'  => 'Tile Horizontally',
-			'repeat-y'  => 'Tile Vertically',
-		)
-	),
-	'background-position'         => array(
-		'id'      => 'background-position',
-		'section' => 'Background',
-		'label'   => 'Background position',
-		'type'    => 'radio',
-		'default' => 'center',
-		'choices' => array( 'left' => 'Left', 'center' => 'Center', 'right' => 'Right' )
-	),
 	'background-attachment'       => array(
 		'id'      => 'background-attachment',
 		'section' => 'Background',

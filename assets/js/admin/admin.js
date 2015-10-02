@@ -22,7 +22,7 @@
 		    } else {
 			    $bg_options.show();
 		    }
-	    } )
+	    } );
 
 
 	    //wpColorPicker

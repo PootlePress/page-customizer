@@ -15,6 +15,7 @@ video#page-customizer-bg-video {
 	overflow: hidden;
 	margin: auto;
 	object-fit: cover;
+	z-index:-1;
 }
 
 @media only screen and (max-width: 727px) {

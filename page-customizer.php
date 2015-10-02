@@ -272,7 +272,7 @@ final class Pootle_Page_Customizer {
 
 		add_action( 'admin_print_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'public_scripts' ) );
-		add_action( 'customize_preview_init', array( $this, 'customize_preview_js' ) );
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'customizer_script' ) );
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 		add_action( 'admin_notices', array( $this, 'customizer_notice' ) );
 		add_action( 'admin_bar_menu', array( $this, 'add_item' ), 999 );
@@ -352,6 +352,14 @@ final class Pootle_Page_Customizer {
 		     '</a>';
 	}
 
+	/**
+	 * Adds control scripts to WP_Customize_Manager
+	 * @since 1.0.0
+	 */
+	public function customizer_script() {
+		wp_enqueue_script( 'pnm-customize-controls', plugin_dir_url( __FILE__ ) . 'assets/js/customizer.js', array( 'jquery' ), false, true );
+	}
+
 	public function save_post( $postID ) {
 		$post = get_post( $postID );
 
@@ -422,9 +430,10 @@ final class Pootle_Page_Customizer {
 
 		wp_enqueue_script( 'page-custo-script', plugins_url( '/assets/js/public.js', __FILE__ ) );
 
+		$videoType = $this->get_value( 'Background', 'background-type', false );
 		$videoUrl = $this->get_value( 'Background', 'background-video', false );
 
-		if ( ! empty( $videoUrl ) ) {
+		if ( 'video' == $videoType && ! empty( $videoUrl ) ) {
 			echo '<script> window.pageCustoVideoUrl = "' . $videoUrl . '";</script>';
 			?>
 			<video id="page-customizer-bg-video" style="display: none;"
@@ -447,12 +456,11 @@ final class Pootle_Page_Customizer {
 		//Body options
 		$bgColor   = $this->get_value( 'Background', 'background-color', null );
 		$bgImage   = $this->get_value( 'Background', 'background-image', null );
-		if ( 'video' == $this->get_value( 'Background', 'background-type', null ) ) {
+		if ( 'video' == $videoType ) {
 			$bgImage = $this->get_value( 'Background', 'background-responsive-image', null );
 		}
-		$BgOptions = ' ' . $this->get_value( 'Background', 'background-repeat', null ) . ' '
-					. $this->get_value( 'Background', 'background-attachment', null ) . ' '
-					. $this->get_value( 'Background', 'background-position', null );
+		$BgOptions = ' no-repeat '
+					. $this->get_value( 'Background', 'background-attachment', null ) . ' center/cover';
 
 
 		//Content
@@ -479,18 +487,20 @@ final class Pootle_Page_Customizer {
 
 		//Body styles
 		$css .= 'body.pootle-page-customizer-active {';
-		if ( $bgColor ) {
-			$css .= "background-color : {$bgColor} !important;";
-		}
-		if ( $bgImage ) {
-			$css .= "background : url({$bgImage}){$BgOptions}  !important;";
+		if ( 'color' == $videoType && $bgColor ) {
+			$css .= "background: {$bgColor} !important;";
+		} else {
+			$css .= "background : url({$bgImage}){$BgOptions} !important;";
+			$css .= "background-size : cover";
 		}
 		//Body styles END
 		$css .= "}\n";
 
 		//Content
 		if ( $hideBread ) {
-			$css .= "#breadcrumbs, #breadcrumb, .breadcrumbs, .breadcrumb, .breadcrumbs-trail, .wc-breadcrumbs, .wc-breadcrumb, .woocommerce-breadcrumb, .woocommerce-breadcrumbs {display : none !important;}\n";
+			$css .= "#breadcrumbs, #breadcrumb, .breadcrumbs, .breadcrumb, .breadcrumbs-trail, .wc-breadcrumbs, .wc-breadcrumb, .woocommerce-breadcrumb, .woocommerce-breadcrumbs {\n" .
+					"display : none !important;\n" .
+					"}\n";
 		}
 		if ( $hideTitle ) {
 			$css .= ".entry-title {display : none !important;}\n";
@@ -536,16 +546,6 @@ final class Pootle_Page_Customizer {
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_style( 'thickbox' );
 		wp_enqueue_style( 'ppc-admin-style', trailingslashit( $this->plugin_url ) . 'assets/css/admin/admin.css' );
-	}
-
-
-	/**
-	 * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
-	 *
-	 * @since  0.7
-	 */
-	public function customize_preview_js() {
-		wp_enqueue_script( 'ppc-customizer', plugins_url( '/assets/js/customizer.min.js', __FILE__ ), array( 'customize-preview' ), '1.1', true );
 	}
 
 	/**
