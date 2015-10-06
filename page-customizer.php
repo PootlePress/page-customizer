@@ -447,17 +447,20 @@ final class Pootle_Page_Customizer {
 			</video>
 			<?php
 		}
+
 		//Header options
 		$hideHeader    = $this->get_value( 'Header', 'hide-header', false );
 		$headerBgColor = $this->get_value( 'Header', 'header-background-color', null );
 		$headerBgImage = $this->get_value( 'Header', 'header-background-image', null );
-		//Body options
+
+		//Background options
 		$bgColor   = $this->get_value( 'Background', 'background-color', null );
 		$bgImage   = $this->get_value( 'Background', 'background-image', null );
 		if ( 'video' == $bodyBgType ) {
 			$bgImage = $this->get_value( 'Background', 'background-responsive-image', null );
 		}
 		$BgOptions = ' no-repeat ' . $this->get_value( 'Background', 'background-attachment', null ) . ' center/cover';
+
 		//Content
 		$hideBread = $this->get_value( 'Content', 'hide-breadcrumbs', null );
 		$hideTitle = $this->get_value( 'Content', 'hide-title', null );
@@ -468,7 +471,7 @@ final class Pootle_Page_Customizer {
 		//Init $css
 		$css = '/*PootlePressPageCustomizer*/';
 		//Header styles
-		$css .= '#masthead, #header, #site-header, .site-header, .tc-header{';
+		$css .= '#main-header, #masthead, #header, #site-header, .site-header, .tc-header{';
 		if ( $hideHeader ) {
 			$css .= "display : none !important;";
 		}
@@ -481,7 +484,8 @@ final class Pootle_Page_Customizer {
 		}
 		//Header styles END
 		$css .= "}\n";
-		//Body styles
+
+		//Background styles
 		$css .= 'body.pootle-page-customizer-active {';
 		if ( 'color' == $bodyBgType && $bgColor ) {
 			$css .= "background: {$bgColor} !important;";
@@ -489,8 +493,9 @@ final class Pootle_Page_Customizer {
 			$css .= "background : url({$bgImage}){$BgOptions} !important;";
 			$css .= "background-size : cover";
 		}
-		//Body styles END
+		//Background styles END
 		$css .= "}\n";
+
 		//Content
 		if ( $hideBread ) {
 			$css .= "#breadcrumbs, #breadcrumb, .breadcrumbs, .breadcrumb, .breadcrumbs-trail, .wc-breadcrumbs, .wc-breadcrumb, .woocommerce-breadcrumb, .woocommerce-breadcrumbs {\n" .
@@ -498,14 +503,16 @@ final class Pootle_Page_Customizer {
 			        "}\n";
 		}
 		if ( $hideTitle ) {
-			$css .= ".entry-title {display : none !important;}\n";
+			$css .= ".main_title, .entry-title {display : none !important;}\n";
 		}
 		if ( $hideSidebar ) {
-			$css .= "aside, .sidebar, .side-bar {display : none !important;}\n";
+			$css .= "aside, #sidebar, .sidebar, .side-bar {display : none !important;}\n";
 			$css .= "#content, .content, .content-area { width : 100% !important;}\n";
 		}
+
 		//Footer style
-		$css .= '#footer, #site-footer, .site-footer{';
+		$css .= '.colophon, .pootle-page-customizer-active #footer, .pootle-page-customizer-active #main-footer,' .
+		        ' .pootle-page-customizer-active #site-footer, .pootle-page-customizer-active .site-footer{';
 		if ( $hideFooter ) {
 			$css .= "display : none !important;";
 		}
@@ -514,11 +521,28 @@ final class Pootle_Page_Customizer {
 		}
 		//Footer styles END
 		$css .= "}\n";
+
+		$css .= $this->fix_ux();
 		$css .= '@media only screen and (max-width:768px) {';
 		$css .= $this->mobile_styles();
 		$css .= '}';
 		wp_add_inline_style( 'ppc-styles', $css );
 
+	}
+
+	/**
+	 * Outputs mobile styles
+	 * @return string Mobile styles
+	 */
+	public function fix_ux() {
+		$css     = '';
+		$theme = (string) wp_get_theme();
+
+		if ( in_array( $theme, array( 'Espied', 'Divi' ) ) ) {
+			$css .= "#page, #main-content { background-color: transparent; }";
+		}
+
+		return $css;
 	}
 
 	/**
@@ -538,11 +562,11 @@ final class Pootle_Page_Customizer {
 		$css .= "}\n";
 
 		if ( $this->get_value( 'Mobile', 'mob-hide-footer', false ) ) {
-			$css .= "#footer, #site-footer, .site-footer{ display : none !important; }";
+			$css .= "#footer, #main-footer, #site-footer, .site-footer{ display : none !important; }";
 		}
 
 		if ( $this->get_value( 'Mobile', 'mob-hide-header', false ) ) {
-			$css .= "#masthead, #header, #site-header, .site-header, .tc-header{ display : none !important; }";
+			$css .= "#main-header, #masthead, #header, #site-header, .site-header, .tc-header{ display : none !important; }";
 		}
 
 		if ( $this->get_value( 'Mobile', 'mob-hide-sidebar', null ) ) {
