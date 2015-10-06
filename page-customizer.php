@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Page Customizer
- * Plugin URI: http://pootlepress.com/
- * Description:    Adds options for individual pages, posts and products underneath the WordPress editor. Change background image and color, header background image and color, hide titles, menus, breadcrumbs, layouts and footer.
- * Version: 0.7
- * Author: PootlePress
- * Author URI: http://pootlepress.com/
+ * Plugin URI:  http://pootlepress.com/
+ * Description: Page customizer adds options for individual pages. Add a fullscreen background video, change page background image and color, change header background image and color. Hide header, titles, breadcrumbs, sidebar and footer. Mobile options to change background image and color for phones and tablets.
+ * Version:     1.0.0
+ * Author:      PootlePress
+ * Author URI:  http://pootlepress.com/
  * Requires at least: 4.0.0
  * Tested up to: 4.1.1
  *
@@ -27,43 +27,47 @@ require_once( dirname( __FILE__ ) . '/includes/vars.php' );
 //Post meta customizer
 require_once( dirname( __FILE__ ) . '/includes/class-customizer-postmeta.php' );
 
-//Updator class
-require_once( dirname( __FILE__ ) . '/includes/class-pootlepress-updater.php' );
+/** Addon update API */
+add_action( 'plugins_loaded', 'pootle_page_customizer_api_init' );
 
 /**
- * Instantiates Pootlepress_Updater
+ * Instantiates Pootle_Page_Builder_Addon_Manager with current add-on data
+ * @action plugins_loaded
  */
-function pp_updater() {
-	if ( ! function_exists( 'get_plugin_data' ) ) {
-		include( ABSPATH . 'wp-admin/includes/plugin.php' );
-	}
-	$data                   = get_plugin_data( __FILE__ );
-	$plugin_current_version = $data['Version'];
-	$plugin_remote_path     = 'http://www.pootlepress.com/?updater=1';
-	$plugin_slug            = plugin_basename( __FILE__ );
-	new Pootlepress_Updater ( $plugin_current_version, $plugin_remote_path, $plugin_slug );
+function pootle_page_customizer_api_init() {
+	$instance = Pootle_Page_Customizer();
+	//Return if POOTLEPB_DIR not defined
+	if ( ! defined( 'POOTLEPB_DIR' ) ) { return; }
+	/** Including PootlePress_API_Manager class */
+	require_once POOTLEPB_DIR . 'inc/addon-manager/class-manager.php';
+	/** Instantiating PootlePress_API_Manager */
+	new Pootle_Page_Builder_Addon_Manager(
+		$instance->token,
+		'Page Customizer',
+		$instance->version,
+		__FILE__,
+		$instance->token
+	);
 }
-
-add_action( 'init', 'pp_updater' );
 
 /**
  * Returns the main instance of Pootle_Page_Customizer to prevent the need to use globals.
  *
- * @since  0.7
+ * @since  1.0.0
  * @return object Pootle_Page_Customizer
  */
 function Pootle_Page_Customizer() {
 	return Pootle_Page_Customizer::instance();
 } // End Pootle_Page_Customizer()
 
-Pootle_Page_Customizer();
+$Pootle_Page_Customizer_Instance = Pootle_Page_Customizer();
 
 /**
  * Main Pootle_Page_Customizer Class
  *
  * @class Pootle_Page_Customizer
- * @version    0.7
- * @since 0.7
+ * @version    1.0.0
+ * @since 1.0.0
  * @package    Pootle_Page_Customizer
  * @author PootlePress
  */
@@ -72,7 +76,7 @@ final class Pootle_Page_Customizer {
 	 * Pootle_Page_Customizer The single instance of Pootle_Page_Customizer.
 	 * @var    object
 	 * @access  private
-	 * @since    0.7
+	 * @since    1.0.0
 	 */
 	private static $_instance = null;
 
@@ -80,7 +84,7 @@ final class Pootle_Page_Customizer {
 	 * The token.
 	 * @var     string
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $token;
 
@@ -88,7 +92,7 @@ final class Pootle_Page_Customizer {
 	 * The version number.
 	 * @var     string
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $version;
 
@@ -96,7 +100,7 @@ final class Pootle_Page_Customizer {
 	 * The plugin directory URL.
 	 * @var     string
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $plugin_url;
 
@@ -104,7 +108,7 @@ final class Pootle_Page_Customizer {
 	 * The plugin directory path.
 	 * @var     string
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $plugin_path;
 
@@ -113,7 +117,7 @@ final class Pootle_Page_Customizer {
 	 * The admin object.
 	 * @var     object
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $admin;
 
@@ -121,7 +125,7 @@ final class Pootle_Page_Customizer {
 	 * The settings object.
 	 * @var     object
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $settings;
 
@@ -129,7 +133,7 @@ final class Pootle_Page_Customizer {
 	 * The post types we support.
 	 * @var     array
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $supported_post_types = array();
 
@@ -137,7 +141,7 @@ final class Pootle_Page_Customizer {
 	 * The taxonomies we support.
 	 * @var     array
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $supported_taxonomies = array();
 
@@ -145,7 +149,7 @@ final class Pootle_Page_Customizer {
 	 * All the post metas to populate.
 	 * @var     array
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public $fields = array();
 
@@ -158,13 +162,13 @@ final class Pootle_Page_Customizer {
 	/**
 	 * Constructor function.
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public function __construct() {
 		$this->token       = 'pootle-page-customizer';
 		$this->plugin_url  = plugin_dir_url( __FILE__ );
 		$this->plugin_path = plugin_dir_path( __FILE__ );
-		$this->version     = '0.7';
+		$this->version     = '1.0.0';
 
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
@@ -178,7 +182,7 @@ final class Pootle_Page_Customizer {
 	 *
 	 * Ensures only one instance of Pootle_Page_Customizer is loaded or can be loaded.
 	 *
-	 * @since 0.7
+	 * @since 1.0.0
 	 * @static
 	 * @see Pootle_Page_Customizer()
 	 * @return Pootle_Page_Customizer instance
@@ -194,7 +198,7 @@ final class Pootle_Page_Customizer {
 	/**
 	 * Load the localisation file.
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 * @return  void
 	 */
 	public function load_plugin_textdomain() {
@@ -204,25 +208,25 @@ final class Pootle_Page_Customizer {
 	/**
 	 * Cloning is forbidden.
 	 *
-	 * @since 0.7
+	 * @since 1.0.0
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '0.7' );
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '1.0.0' );
 	}
 
 	/**
 	 * Unserializing instances of this class is forbidden.
 	 *
-	 * @since 0.7
+	 * @since 1.0.0
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '0.7' );
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?' ), '1.0.0' );
 	}
 
 	/**
 	 * Plugin page links
 	 *
-	 * @since  0.7
+	 * @since  1.0.0
 	 */
 	public function plugin_links( $links ) {
 		$plugin_links = array(
@@ -237,7 +241,7 @@ final class Pootle_Page_Customizer {
 	 * Installation.
 	 * Runs on activation. Logs the version number and assigns a notice message to a WordPress option.
 	 * @access  public
-	 * @since   0.7
+	 * @since   1.0.0
 	 * @return  void
 	 */
 	public function install() {
@@ -247,7 +251,7 @@ final class Pootle_Page_Customizer {
 	/**
 	 * Log the plugin version number.
 	 * @access  private
-	 * @since   0.7
+	 * @since   1.0.0
 	 * @return  void
 	 */
 	private function _log_version_number() {
@@ -299,7 +303,7 @@ final class Pootle_Page_Customizer {
 	/**
 	 * Admin notice
 	 * Checks the notice setup in install(). If it exists display it then delete the option so it's not displayed again.
-	 * @since   0.7
+	 * @since   1.0.0
 	 * @return  void
 	 */
 	public function customizer_notice() {
@@ -420,19 +424,16 @@ final class Pootle_Page_Customizer {
 
 	/**
 	 * Enqueue CSS and custom styles.
-	 * @since   0.7
+	 * @since   1.0.0
 	 * @return  bool|void
 	 */
 	public function public_scripts() {
 
 		if ( ! is_single() && ! is_page() ) { return false; }
-
 		wp_enqueue_style( 'ppc-styles', plugins_url( '/assets/css/style.css', __FILE__ ) );
 		wp_enqueue_script( 'page-custo-script', plugins_url( '/assets/js/public.js', __FILE__ ) );
-
 		$bodyBgType = $this->get_value( 'Background', 'background-type', false );
 		$videoUrl = $this->get_value( 'Background', 'background-video', false );
-
 		if ( 'video' == $bodyBgType && ! empty( $videoUrl ) ) {
 			echo '<script> window.pageCustoVideoUrl = "' . $videoUrl . '";</script>';
 			?>
@@ -446,12 +447,10 @@ final class Pootle_Page_Customizer {
 			</video>
 			<?php
 		}
-
 		//Header options
 		$hideHeader    = $this->get_value( 'Header', 'hide-header', false );
 		$headerBgColor = $this->get_value( 'Header', 'header-background-color', null );
 		$headerBgImage = $this->get_value( 'Header', 'header-background-image', null );
-
 		//Body options
 		$bgColor   = $this->get_value( 'Background', 'background-color', null );
 		$bgImage   = $this->get_value( 'Background', 'background-image', null );
@@ -459,19 +458,15 @@ final class Pootle_Page_Customizer {
 			$bgImage = $this->get_value( 'Background', 'background-responsive-image', null );
 		}
 		$BgOptions = ' no-repeat ' . $this->get_value( 'Background', 'background-attachment', null ) . ' center/cover';
-
 		//Content
 		$hideBread = $this->get_value( 'Content', 'hide-breadcrumbs', null );
 		$hideTitle = $this->get_value( 'Content', 'hide-title', null );
 		$hideSidebar = $this->get_value( 'Content', 'hide-sidebar', null );
-
 		//Footer options
 		$hideFooter = $this->get_value( 'Footer', 'hide-footer', false );
 		$footerBgColor = $this->get_value( 'Footer', 'footer-background-color', null );
-
 		//Init $css
 		$css = '/*PootlePressPageCustomizer*/';
-
 		//Header styles
 		$css .= '#masthead, #header, #site-header, .site-header, .tc-header{';
 		if ( $hideHeader ) {
@@ -486,7 +481,6 @@ final class Pootle_Page_Customizer {
 		}
 		//Header styles END
 		$css .= "}\n";
-
 		//Body styles
 		$css .= 'body.pootle-page-customizer-active {';
 		if ( 'color' == $bodyBgType && $bgColor ) {
@@ -497,22 +491,19 @@ final class Pootle_Page_Customizer {
 		}
 		//Body styles END
 		$css .= "}\n";
-
 		//Content
 		if ( $hideBread ) {
 			$css .= "#breadcrumbs, #breadcrumb, .breadcrumbs, .breadcrumb, .breadcrumbs-trail, .wc-breadcrumbs, .wc-breadcrumb, .woocommerce-breadcrumb, .woocommerce-breadcrumbs {\n" .
-					"display : none !important;\n" .
-					"}\n";
+			        "display : none !important;\n" .
+			        "}\n";
 		}
 		if ( $hideTitle ) {
 			$css .= ".entry-title {display : none !important;}\n";
 		}
-
 		if ( $hideSidebar ) {
 			$css .= "aside, .sidebar, .side-bar {display : none !important;}\n";
 			$css .= "#content, .content, .content-area { width : 100% !important;}\n";
 		}
-
 		//Footer style
 		$css .= '#footer, #site-footer, .site-footer{';
 		if ( $hideFooter ) {
@@ -523,12 +514,11 @@ final class Pootle_Page_Customizer {
 		}
 		//Footer styles END
 		$css .= "}\n";
-
 		$css .= '@media only screen and (max-width:768px) {';
 		$css .= $this->mobile_styles();
 		$css .= '}';
-
 		wp_add_inline_style( 'ppc-styles', $css );
+
 	}
 
 	/**
@@ -613,7 +603,7 @@ final class Pootle_Page_Customizer {
 	/**
 	 * Render a field of a given type.
 	 * @access public
-	 * @since 0.7
+	 * @since 1.0.0
 	 *
 	 * @param array $args The field parameters.
 	 * @param string $output_format = ( post || termEdit || termAdd )

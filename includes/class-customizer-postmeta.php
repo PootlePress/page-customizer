@@ -38,7 +38,7 @@ class Lib_Customizer_Postmeta {
 	 * @param $id
 	 * @param $title
 	 * @param $fields
-	 * @since   0.7
+	 * @since   1.0.0
 	 */
 	public function __construct( $id, $title, $fields ) {
 		$this->id = $id;
@@ -67,7 +67,7 @@ class Lib_Customizer_Postmeta {
 	 * Adds custom fields, panels, and sections to WP_Customize_Manager
 	 * @param WP_Customize_Manager $manager
 	 * @action customize_register
-	 * @since 0.7
+	 * @since 1.0.0
 	 */
 	public function customizer_register( WP_Customize_Manager $manager ) {
 		if ( ! class_exists( 'Lib_Customize_Setting' ) ) {
@@ -127,7 +127,7 @@ class Lib_Customizer_Postmeta {
 	 * Adds controls and settings to WP_Customize_Manager
 	 * @param WP_Customize_Manager $manager
 	 * @param array $fields Controls data
-	 * @since 0.7
+	 * @since 1.0.0
 	 */
 	private function add_controls( WP_Customize_Manager $manager, $fields ){
 
@@ -141,7 +141,7 @@ class Lib_Customizer_Postmeta {
 	/**
 	 * Adds controls and settings to WP_Customize_Manager
 	 * @action customize_controls_enqueue_scripts
-	 * @since 0.7
+	 * @since 1.0.0
 	 */
 	public function customizer_scripts(){
 		wp_enqueue_script(
@@ -155,7 +155,7 @@ class Lib_Customizer_Postmeta {
 	 * Adds simple control and its setting to WP_Customize_Manager
 	 * @param WP_Customize_Manager $manager
 	 * @param array $option Field data
-	 * @since 0.7
+	 * @since 1.0.0
 	 */
 	private function add_simple_control( WP_Customize_Manager $manager, $option ) {
 
