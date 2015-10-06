@@ -730,7 +730,7 @@ final class Pootle_Page_Customizer {
 	 * @return  string       HTML markup for the field.
 	 */
 	protected function render_field_checkbox( $key, $args, $current_val = null ) {
-		$html = '<input id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '" type="checkbox" value="true" ' . checked( $current_val, 'true', false ) . ' />';
+		$html = '<input id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '" type="checkbox" value="1" ' . checked( $current_val, '1', false ) . ' />';
 
 		return $html;
 	}
