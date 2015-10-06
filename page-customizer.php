@@ -458,16 +458,17 @@ final class Pootle_Page_Customizer {
 		if ( 'video' == $bodyBgType ) {
 			$bgImage = $this->get_value( 'Background', 'background-responsive-image', null );
 		}
-		$BgOptions = ' no-repeat '
-					. $this->get_value( 'Background', 'background-attachment', null ) . ' center/cover';
-
+		$BgOptions = ' no-repeat ' . $this->get_value( 'Background', 'background-attachment', null ) . ' center/cover';
 
 		//Content
 		$hideBread = $this->get_value( 'Content', 'hide-breadcrumbs', null );
 		$hideTitle = $this->get_value( 'Content', 'hide-title', null );
 		$hideSidebar = $this->get_value( 'Content', 'hide-sidebar', null );
+
 		//Footer options
 		$hideFooter = $this->get_value( 'Footer', 'hide-footer', false );
+		$footerBgColor = $this->get_value( 'Footer', 'footer-background-color', null );
+
 		//Init $css
 		$css = '/*PootlePressPageCustomizer*/';
 
@@ -477,10 +478,11 @@ final class Pootle_Page_Customizer {
 			$css .= "display : none !important;";
 		}
 		if ( $headerBgColor ) {
-			$css .= "background-color : {$headerBgColor} !important";
+			$css .= "background-color : {$headerBgColor} !important;";
 		}
 		if ( $headerBgImage ) {
-			$css .= "background-image : url({$headerBgImage}) !important";
+			$css .= "background-image : url({$headerBgImage}) !important;";
+			$css .= "background-size : cover !important;";
 		}
 		//Header styles END
 		$css .= "}\n";
@@ -516,6 +518,9 @@ final class Pootle_Page_Customizer {
 		if ( $hideFooter ) {
 			$css .= "display : none !important;";
 		}
+		if ( $footerBgColor ) {
+			$css .= "background-color : $footerBgColor !important;";
+		}
 		//Footer styles END
 		$css .= "}\n";
 
@@ -535,7 +540,12 @@ final class Pootle_Page_Customizer {
 		$bgColor = $this->get_value( 'Mobile', 'mob-background-color', null );
 		$bgImage = $this->get_value( 'Mobile', 'mob-background-image', null );
 
-		$css .= "body.pootle-page-customizer-active\n { background-color : {$bgColor} !important;\n background-image : url({$bgImage}) !important;\n }\n";
+		$css .= "body.pootle-page-customizer-active {\n" .
+		        "background-color : {$bgColor} !important;\n";
+		if ( ! empty( $bgImage ) ) {
+			$css .= "background-image : url({$bgImage}) !important;\n";
+		}
+		$css .= "}\n";
 
 		if ( $this->get_value( 'Mobile', 'mob-hide-footer', false ) ) {
 			$css .= "#footer, #site-footer, .site-footer{ display : none !important; }";
@@ -579,6 +589,11 @@ final class Pootle_Page_Customizer {
 			'thickbox',
 			'jquery-ui-tabs'
 		) );
+		wp_enqueue_script(
+			'lib-alpha-color-picker',
+			plugin_dir_url( __FILE__ ) . '/assets/alpha-color-picker.js',
+			array( 'jquery', 'wp-color-picker' )
+		);
 
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_style( 'thickbox' );
@@ -696,7 +711,9 @@ final class Pootle_Page_Customizer {
 		$html = '';
 		if ( isset( $args['choices'] ) && ( 0 < count( (array) $args['choices'] ) ) ) {
 			foreach ( $args['choices'] as $k => $v ) {
-				$html .= '<label for="' . esc_attr( $key ) . '"><input type="radio" name="' . esc_attr( $key ) . '" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $current_val ), $k, false ) . ' /> ' . $v . '</label><br>' . "\n";
+				$html .= '<label for="' . esc_attr( $key ) . '"><input type="radio" name="' . esc_attr( $key ) .
+				         '" value="' . esc_attr( $k ) . '"' . checked( esc_attr( $current_val ), $k, false ) . ' /> '
+				         . $v . '</label><br>' . "\n";
 			}
 		}
 
@@ -768,8 +785,8 @@ final class Pootle_Page_Customizer {
 	 *
 	 * @return  string       HTML markup for the field.
 	 */
-	protected function render_field_color( $key, $args, $current_val = null ) {
-		$html = '<input class="color-picker-hex" id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '" type="text" value="' . esc_attr( $current_val ) . '" />';
+	protected function render_field_lib_color( $key, $args, $current_val = null ) {
+		$html = '<input class="color-picker-hex" data-alpha="true" id="' . esc_attr( $args['id'] ) . '" name="' . esc_attr( $key ) . '" type="text" value="' . esc_attr( $current_val ) . '" />';
 
 		return $html;
 	}

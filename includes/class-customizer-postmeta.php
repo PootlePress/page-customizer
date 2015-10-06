@@ -35,7 +35,9 @@ class Lib_Customizer_Postmeta {
 
 	/**
 	 * Constructor function.
-	 * @access  public
+	 * @param $id
+	 * @param $title
+	 * @param $fields
 	 * @since   0.7
 	 */
 	public function __construct( $id, $title, $fields ) {
@@ -50,24 +52,28 @@ class Lib_Customizer_Postmeta {
 			'dropdownpages' => 'WP_Customize_Control',
 			'textarea'      => 'WP_Customize_Control',
 			'color'         => 'WP_Customize_Color_Control',
+			'lib_color'     => 'Lib_Customize_Alpha_Color_Control',
 			'image'         => 'WP_Customize_Image_Control',
-			'upload'         => 'WP_Customize_Upload_Control',
+			'upload'        => 'WP_Customize_Upload_Control',
 		);
 
 		//Register the panels, sections, controls and settings
 		add_action( 'customize_register', array( $this, 'customizer_register' ) );
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'customizer_scripts' ) );
+
 	}
 
 	/**
 	 * Adds custom fields, panels, and sections to WP_Customize_Manager
 	 * @param WP_Customize_Manager $manager
-	 * @since 2.0.0
+	 * @action customize_register
+	 * @since 0.7
 	 */
 	public function customizer_register( WP_Customize_Manager $manager ) {
 		if ( ! class_exists( 'Lib_Customize_Setting' ) ) {
 			require 'class-customize-setting.php';
 		}
-
+		require 'class-alpha-color-picker.php';
 		$sections = array();
 
 		$fields = $this->fields;
@@ -121,9 +127,9 @@ class Lib_Customizer_Postmeta {
 	 * Adds controls and settings to WP_Customize_Manager
 	 * @param WP_Customize_Manager $manager
 	 * @param array $fields Controls data
-	 * @since 2.0.0
+	 * @since 0.7
 	 */
-	private function add_controls( $manager, $fields ){
+	private function add_controls( WP_Customize_Manager $manager, $fields ){
 
 		foreach ( $fields as $ki => $option ) {
 
@@ -133,12 +139,25 @@ class Lib_Customizer_Postmeta {
 	}
 
 	/**
+	 * Adds controls and settings to WP_Customize_Manager
+	 * @action customize_controls_enqueue_scripts
+	 * @since 0.7
+	 */
+	public function customizer_scripts(){
+		wp_enqueue_script(
+			'ppc-custo-controls',
+			plugin_dir_url( __FILE__ ) . '../assets/ppc-custo-controls.js',
+			array( 'jquery', 'wp-color-picker' )
+		);
+	}
+
+	/**
 	 * Adds simple control and its setting to WP_Customize_Manager
 	 * @param WP_Customize_Manager $manager
 	 * @param array $option Field data
-	 * @since 2.0.0
+	 * @since 0.7
 	 */
-	private function add_simple_control( $manager, $option ) {
+	private function add_simple_control( WP_Customize_Manager $manager, $option ) {
 
 		//Add settings
 		$manager->add_setting(

@@ -26,7 +26,7 @@
 
 
 	    //wpColorPicker
-	    $( '.ppc-field .color-picker-hex' ).wpColorPicker();
+	    $( '.ppc-field .color-picker-hex' ).libColorPicker();
 
 	    // Uploading Fields aka media selection
 	    var file_frame;

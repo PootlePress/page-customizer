@@ -55,7 +55,7 @@ $page_customizer_fields = array(
 		'id'      => 'background-color',
 		'section' => 'Background',
 		'label'   => 'Page background color',
-		'type'    => 'color',
+		'type'    => 'lib_color',
 		'default' => '',
 	),
 
@@ -78,7 +78,7 @@ $page_customizer_fields = array(
 		'id'      => 'header-background-color',
 		'section' => 'Header',
 		'label'   => 'Header background color',
-		'type'    => 'color',
+		'type'    => 'lib_color',
 		'default' => '',
 	),
 
@@ -113,6 +113,13 @@ $page_customizer_fields = array(
 		'type'    => 'checkbox',
 		'default' => '',
 	),
+	'footer-background-color' => array(
+		'id'      => 'footer-background-color',
+		'section' => 'Footer',
+		'label'   => 'Footer background color',
+		'type'    => 'lib_color',
+		'default' => '',
+	),
 
 	//Mobile
 	'mob-background-image' => array(
@@ -126,7 +133,7 @@ $page_customizer_fields = array(
 		'id'      => 'mob-background-color',
 		'section' => 'Mobile',
 		'label'   => 'Page background color for Mobile view',
-		'type'    => 'color',
+		'type'    => 'lib_color',
 		'default' => '',
 	),
 	'mob-hide-footer' => array(
