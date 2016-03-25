@@ -435,9 +435,9 @@ final class Pootle_Page_Customizer {
 		$bodyBgType = $this->get_value( 'Background', 'background-type', false );
 		$videoUrl = $this->get_value( 'Background', 'background-video', false );
 		if ( 'video' == $bodyBgType && ! empty( $videoUrl ) ) {
-			echo '<script> window.pageCustoVideoUrl = "' . $videoUrl . '";</script>';
+			echo '<script> window.pageCustomizerFixedBackground = "' . $videoUrl . '";</script>';
 			?>
-			<video id="page-customizer-bg-video" style="display: none;"
+			<video id="page-customizer-bg-fixed" style="display: none;"
 			       preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
 				<?php
 				echo "<source src='{$videoUrl}' type='video/mp4'>";
@@ -482,6 +482,7 @@ final class Pootle_Page_Customizer {
 			$css .= "background-image : url({$headerBgImage}) !important;";
 			$css .= "background-size : cover !important;";
 		}
+
 		//Header styles END
 		$css .= "}\n";
 
@@ -492,6 +493,13 @@ final class Pootle_Page_Customizer {
 		} else {
 			$css .= "background : url({$bgImage}){$BgOptions} !important;";
 			$css .= "background-size : cover";
+		}
+		if ( 'image' == $bodyBgType && $this->get_value( 'Background', 'background-attachment', null ) ) {
+			echo '<script> window.pageCustomizerFixedBackground = "true";</script>';
+			?>
+			<div style="background : <?php echo "url({$bgImage}) center/cover;background-size:vmax" ?> !important;" id="page-customizer-bg-fixed"></div>
+			<?php
+
 		}
 		//Background styles END
 		$css .= "}\n";

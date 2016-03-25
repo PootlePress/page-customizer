@@ -7,7 +7,7 @@ jQuery(function($, undef){
 	api.lib_alpha_color_control = api.Control.extend({
 		ready: function() {
 			var control = this,
-				picker = control.container.find('.color-picker-hex');
+				picker = this.container.find('.color-picker-hex');
 
 			picker.val( control.setting() ).libColorPicker({
 				change: function() {
