@@ -3,7 +3,7 @@
  * Plugin Name: Page Customizer
  * Plugin URI:  http://pootlepress.com/
  * Description: Page customizer adds options for individual pages. Add a fullscreen background video, change page background image and color, change header background image and color. Hide header, titles, breadcrumbs, sidebar and footer. Mobile options to change background image and color for phones and tablets.
- * Version:     1.0.0
+ * Version:     1.1.0
  * Author:      PootlePress
  * Author URI:  http://pootlepress.com/
  * Requires at least: 4.0.0
@@ -168,7 +168,7 @@ final class Pootle_Page_Customizer {
 		$this->token       = 'pootle-page-customizer';
 		$this->plugin_url  = plugin_dir_url( __FILE__ );
 		$this->plugin_path = plugin_dir_path( __FILE__ );
-		$this->version     = '1.0.0';
+		$this->version     = '1.1.0';
 
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
